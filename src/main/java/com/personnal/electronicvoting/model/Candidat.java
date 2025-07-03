@@ -1,7 +1,6 @@
 package com.personnal.electronicvoting.model;
 import lombok.*;
 import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import java.util.*;
 import java.util.UUID;
