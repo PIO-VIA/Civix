@@ -23,6 +23,7 @@ public class Candidat {
     private String nom;
 
     @NotBlank
+    @Column(name ="nbre_de_vote")
     private int count;
 
     @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)

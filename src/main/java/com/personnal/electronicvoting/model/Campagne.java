@@ -25,7 +25,7 @@ public class Campagne {
     @Column(length = 5000)
     private String description;
 
-    @Column(name = "photo_path", nullable = true)
+    @Column(name = "photo_path")
     private String photo;
 
     @ManyToOne

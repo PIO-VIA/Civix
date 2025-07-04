@@ -41,6 +41,10 @@ public class Administrateur {
     @Column(name = "mot_de_passe", nullable = false)
     private String motDePasse;
 
+    @NotBlank
+    @Email
+    private String email;
+
 
     @Column(name = "empreinte_digitale", columnDefinition = "BYTEA")
     private byte[] empreinteDigitale;
