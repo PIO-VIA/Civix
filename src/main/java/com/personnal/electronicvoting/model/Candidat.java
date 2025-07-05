@@ -20,7 +20,7 @@ public class Candidat {
     private String externalIdCandidat;
 
     @NotBlank
-    private String nom;
+    private String username;
 
     @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes = new ArrayList<>();

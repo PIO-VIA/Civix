@@ -7,7 +7,10 @@ import java.util.UUID;
 
 
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {"motDePasse"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Electeur {

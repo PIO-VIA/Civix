@@ -25,7 +25,7 @@ public class Administrateur {
     private long IdAdmin;
 
     @Column(name = "external_id_aministrateur", unique = true, nullable = false, updatable = false)
-    private String externalIdElecteur;
+    private String externalIdAdministrateur;
 
     @NotBlank(message = "Le nom ne peut pas être vide")
     @Column(name = "nom_administrateur", nullable = false)
@@ -51,8 +51,8 @@ public class Administrateur {
 
     @PrePersist
     public void generateExternalId() {
-        if (this.externalIdElecteur == null) {
-            this.externalIdElecteur = UUID.randomUUID().toString();
+        if (this.externalIdAdministrateur == null) {
+            this.externalIdAdministrateur = UUID.randomUUID().toString();
         }
     }
 
