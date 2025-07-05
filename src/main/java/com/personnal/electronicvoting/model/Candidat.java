@@ -22,9 +22,8 @@ public class Candidat {
     @NotBlank
     private String nom;
 
-    @NotBlank
-    @Column(name ="nbre_de_vote")
-    private int count;
+    @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vote> votes = new ArrayList<>();
 
     @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Campagne> campagnes = new ArrayList<>();

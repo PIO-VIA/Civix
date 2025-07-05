@@ -43,7 +43,7 @@ public class Electeur {
     private byte[] empreinteDigitale;
 
     @Column(name="a_vote?" ,nullable=false)
-    private boolean aVote;
+    private boolean aVote = false;
 
     @PrePersist
     public void generateExternalId() {
