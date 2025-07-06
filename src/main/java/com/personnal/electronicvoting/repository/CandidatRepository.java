@@ -8,9 +8,9 @@ import java.util.*;
 
 public interface CandidatRepository extends JpaRepository<Candidat, Long> {
     Optional<Candidat> findByExternalIdCandidat(String externalId);
-    Optional<Candidat> findByNom(String nom);
-    boolean existsByNom(String nom);
-    List<Candidat> findByNomContaining(String nomPart);
+    Optional<Candidat> findByUsername(String nom);
+    boolean existsByUsername(String nom);
+    List<Candidat> findByUsernameContaining(String nomPart);
 
     @Query("SELECT COUNT(v) FROM Vote v WHERE v.candidat.externalIdCandidat = :candidatId")
     long countVotesByCandidat(@Param("candidatId") String candidatId);

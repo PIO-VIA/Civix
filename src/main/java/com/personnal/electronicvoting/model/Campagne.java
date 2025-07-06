@@ -19,7 +19,7 @@ public class Campagne {
 
     @NotBlank
     @Column(name = "external_id_campagne", unique = true, nullable = false, updatable = false)
-    private String ExternalIdCampagne;
+    private String externalIdCampagne;
 
     @NotBlank(message = "La description est obligatoire")
     @Column(length = 5000)
@@ -34,8 +34,8 @@ public class Campagne {
 
     @PrePersist
     public void generateExternalId() {
-        if (this.ExternalIdCampagne == null) {
-            this.ExternalIdCampagne = UUID.randomUUID().toString();
+        if (this.externalIdCampagne == null) {
+            this.externalIdCampagne = UUID.randomUUID().toString();
         }
     }
 

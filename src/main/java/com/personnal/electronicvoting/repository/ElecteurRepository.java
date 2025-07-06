@@ -10,5 +10,5 @@ public interface ElecteurRepository extends JpaRepository<Electeur, Long> {
     Optional<Electeur> findByEmail(String email);
     Optional<Electeur> findByUsername(String username);
     boolean existsByEmail(String email);
-    List<Electeur> findByAVoteTrue();
+    List<Electeur> findByaVoteTrue();
 }

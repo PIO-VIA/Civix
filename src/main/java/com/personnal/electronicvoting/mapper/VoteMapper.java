@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface VoteMapper {
 
-    @Mapping(source = "electeur.externalId", target = "electeurId")
-    @Mapping(source = "candidat.externalId", target = "candidatId")
+    @Mapping(source = "electeur.externalIdElecteur", target = "electeurId")
+    @Mapping(source = "candidat.externalIdCandidat", target = "candidatId")
     VoteDTO toDTO(Vote vote);
 
     @Mapping(target = "electeur", ignore = true)
