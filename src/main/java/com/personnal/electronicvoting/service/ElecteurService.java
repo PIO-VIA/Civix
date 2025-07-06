@@ -1,7 +1,6 @@
 package com.personnal.electronicvoting.service;
 
 import com.personnal.electronicvoting.dto.ElecteurDTO;
-import com.personnal.electronicvoting.dto.request.CreateElecteurRequest;
 import com.personnal.electronicvoting.model.Electeur;
 import com.personnal.electronicvoting.repository.ElecteurRepository;
 import com.personnal.electronicvoting.mapper.*;
@@ -23,24 +22,6 @@ public class ElecteurService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public ElecteurDTO creerElecteur(CreateElecteurRequest request) {
-        log.info(" Création électeur - Email: {}", request.getEmail());
-
-        if (electeurRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email déjà utilisé");
-        }
-        String motDePasseHache = passwordEncoder.encode(request.getMotDePasse());
-
-        // Création entité
-        Electeur electeur = new Electeur();
-        electeur.setUsername(request.getUsername());
-        electeur.setEmail(request.getEmail());
-        electeur.setMotDePasse(motDePasseHache);
-
-        Electeur sauvegarde = electeurRepository.save(electeur);
-        log.info(" Électeur créé - ID: {}", sauvegarde.getExternalIdElecteur());
-        return userMapper.toDTO(sauvegarde);
-    }
 
     public List<ElecteurDTO> listerTous() {
         return electeurRepository.findAll()
