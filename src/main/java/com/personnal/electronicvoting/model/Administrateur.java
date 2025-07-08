@@ -24,7 +24,7 @@ public class Administrateur {
     @Column(name = "id_administrateur")
     private long IdAdmin;
 
-    @Column(name = "external_id_aministrateur", unique = true, nullable = false, updatable = false)
+    @Column(name = "external_id_administrateur", unique = true, nullable = false, updatable = false)
     private String externalIdAdministrateur;
 
     @NotBlank(message = "Le nom ne peut pas être vide")

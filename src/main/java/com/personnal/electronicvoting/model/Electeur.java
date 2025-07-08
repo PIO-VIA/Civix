@@ -45,7 +45,7 @@ public class Electeur {
     @Column(name = "empreinte_digitale", columnDefinition = "BYTEA")
     private byte[] empreinteDigitale;
 
-    @Column(name="a_vote?" ,nullable=false)
+    @Column(name="a_vote" ,nullable=false)
     private boolean aVote = false;
 
     @PrePersist
