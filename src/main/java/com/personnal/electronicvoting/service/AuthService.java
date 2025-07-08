@@ -117,28 +117,24 @@ public class AuthService {
     /**
      * ✅ Vérifier si un token électeur est valide
      */
-    public boolean verifierTokenElecteur(String token) {
-        try {
-            // Extraction de l'ID depuis le token simplifié
-            if (token.startsWith("ELECTEUR-") && token.length() > 9) {
-                String electeurId = token.substring(9);
-                return electeurRepository.findByExternalIdElecteur(electeurId).isPresent();
-            }
-            return false;
-        } catch (Exception e) {
-            log.debug("Token électeur invalide: {}", token);
-            return false;
-        }
-    }
-
     /**
-     * ✅ Vérifier si un token admin est valide
+     * ✅ Vérifier si un token admin est valide (CORRIGÉ)
      */
     public boolean verifierTokenAdmin(String token) {
         try {
             if (token.startsWith("ADMIN-") && token.length() > 6) {
-                String adminId = token.substring(6);
-                return administrateurRepository.findByExternalIdAdministrateur(adminId).isPresent();
+                // Extraire seulement l'UUID admin (pas le timestamp)
+                String tokenBody = token.substring(6); // Enlever "ADMIN-"
+                String[] parts = tokenBody.split("-");
+
+                // Reconstituer l'UUID (5 parties séparées par des tirets)
+                if (parts.length >= 5) {
+                    String adminId = String.join("-", parts[0], parts[1], parts[2], parts[3], parts[4]);
+
+                    boolean exists = administrateurRepository.findByExternalIdAdministrateur(adminId).isPresent();
+                    log.debug("Vérification token admin - UUID: {}, Existe: {}", adminId, exists);
+                    return exists;
+                }
             }
             return false;
         } catch (Exception e) {
@@ -148,31 +144,64 @@ public class AuthService {
     }
 
     /**
-     * 🔍 Obtenir électeur depuis token
+     * ✅ Vérifier si un token électeur est valide (CORRIGÉ)
      */
-    public Electeur obtenirElecteurDepuisToken(String token) {
-        if (!verifierTokenElecteur(token)) {
-            throw new RuntimeException("Token électeur invalide");
-        }
+    public boolean verifierTokenElecteur(String token) {
+        try {
+            if (token.startsWith("ELECTEUR-") && token.length() > 9) {
+                // Extraire seulement l'UUID électeur (pas le timestamp)
+                String tokenBody = token.substring(9); // Enlever "ELECTEUR-"
+                String[] parts = tokenBody.split("-");
 
-        String electeurId = token.substring(9);
-        return electeurRepository.findByExternalIdElecteur(electeurId)
-                .orElseThrow(() -> new RuntimeException("Électeur non trouvé"));
+                // Reconstituer l'UUID (5 parties séparées par des tirets)
+                if (parts.length >= 5) {
+                    String electeurId = String.join("-", parts[0], parts[1], parts[2], parts[3], parts[4]);
+
+                    boolean exists = electeurRepository.findByExternalIdElecteur(electeurId).isPresent();
+                    log.debug("Vérification token électeur - UUID: {}, Existe: {}", electeurId, exists);
+                    return exists;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            log.debug("Token électeur invalide: {}", token);
+            return false;
+        }
     }
 
     /**
-     * 🔍 Obtenir admin depuis token
+     * 🔍 Obtenir admin depuis token (CORRIGÉ)
      */
     public Administrateur obtenirAdminDepuisToken(String token) {
         if (!verifierTokenAdmin(token)) {
             throw new RuntimeException("Token admin invalide");
         }
 
-        String adminId = token.substring(6);
+        // Extraire l'UUID admin
+        String tokenBody = token.substring(6); // Enlever "ADMIN-"
+        String[] parts = tokenBody.split("-");
+        String adminId = String.join("-", parts[0], parts[1], parts[2], parts[3], parts[4]);
+
         return administrateurRepository.findByExternalIdAdministrateur(adminId)
                 .orElseThrow(() -> new RuntimeException("Administrateur non trouvé"));
     }
 
+    /**
+     * 🔍 Obtenir électeur depuis token (CORRIGÉ)
+     */
+    public Electeur obtenirElecteurDepuisToken(String token) {
+        if (!verifierTokenElecteur(token)) {
+            throw new RuntimeException("Token électeur invalide");
+        }
+
+        // Extraire l'UUID électeur
+        String tokenBody = token.substring(9); // Enlever "ELECTEUR-"
+        String[] parts = tokenBody.split("-");
+        String electeurId = String.join("-", parts[0], parts[1], parts[2], parts[3], parts[4]);
+
+        return electeurRepository.findByExternalIdElecteur(electeurId)
+                .orElseThrow(() -> new RuntimeException("Électeur non trouvé"));
+    }
     // ==================== CHANGEMENT MOT DE PASSE ====================
 
     /**
@@ -254,7 +283,7 @@ public class AuthService {
         }
 
         // Vérification complexité
-        if (!motDePasse.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+        if (!motDePasse.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&._-])[A-Za-z\\d@$!%*?&._-]{8,}$")) {
             throw new RuntimeException("Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial");
         }
     }

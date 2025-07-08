@@ -15,7 +15,7 @@ public class ChangePasswordRequest {
     @NotBlank(message = "Le nouveau mot de passe est obligatoire")
     @Size(min = 8, message = "Le nouveau mot de passe doit contenir au moins 8 caractères")
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&._-])[A-Za-z\\d@$!%*?&._-]{8,}$",
             message = "Le nouveau mot de passe doit contenir une majuscule, minuscule, chiffre et caractère spécial"
     )
     private String nouveauMotDePasse;
