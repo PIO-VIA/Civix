@@ -79,21 +79,28 @@ public class ElecteurController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody ChangePasswordRequest request) {
 
-        log.info("🔑 Changement mot de passe électeur");
+        log.info("Changement mot de passe électeur");
 
         try {
-            var electeur = verifierEtObtenirElecteur(token);
+            // Nettoyer le token
+            String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
-            electeurService.changerMotDePasse(electeur.getExternalIdElecteur(), request);
+            // Utiliser directement AuthService
+            var authResponse = authService.changerMotDePasseElecteur(
+                    cleanToken,
+                    request.getAncienMotDePasse(),
+                    request.getNouveauMotDePasse()
+            );
 
-            log.info("✅ Mot de passe changé avec succès");
+            log.info("Mot de passe changé avec succès pour électeur: {}", authResponse.getUserId());
+
             return ResponseEntity.ok("Mot de passe changé avec succès");
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur changement mot de passe: {}", e.getMessage());
+            log.warn("Erreur changement mot de passe: {}", e.getMessage());
             return ResponseEntity.badRequest().body("Erreur: " + e.getMessage());
         } catch (Exception e) {
-            log.error("💥 Erreur système changement mot de passe: {}", e.getMessage(), e);
+            log.error("Erreur système changement mot de passe: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur système");
         }
