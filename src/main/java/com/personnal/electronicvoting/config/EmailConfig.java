@@ -14,11 +14,11 @@ public class EmailConfig {
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        // 📧 Configuration pour Gmail (le plus simple)
+        //  Configuration pour Gmail (le plus simple)
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        // ⚠️ À REMPLACER par vos vraies credentials
+        // ️ À REMPLACER par vos vraies credentials
         mailSender.setUsername("fitj202@gmail.com");
         mailSender.setPassword("lmrh mqqq pjej tcbe");
 
@@ -26,7 +26,7 @@ public class EmailConfig {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "false");  // Mettre "true" pour debug
+        props.put("mail.debug", "false");
 
         return mailSender;
     }

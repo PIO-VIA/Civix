@@ -27,13 +27,13 @@ public class CandidatService {
     // ==================== CONSULTATION PUBLIQUE ====================
 
     /**
-     * 📋 Lister tous les candidats (vue électeur)
+     *  Lister tous les candidats (vue électeur)
      */
     public List<CandidatDTO> listerTousCandidats() {
-        log.info("📋 Consultation publique - Liste des candidats");
+        log.info(" Consultation publique - Liste des candidats");
 
         List<Candidat> candidats = candidatRepository.findAll();
-        log.info("📊 {} candidats trouvés", candidats.size());
+        log.info("{} candidats trouvés", candidats.size());
 
         return candidats.stream()
                 .map(candidatMapper::toDTO)
@@ -41,10 +41,10 @@ public class CandidatService {
     }
 
     /**
-     * 🏆 Obtenir candidats classés par nombre de votes (résultats)
+     * Obtenir candidats classés par nombre de votes (résultats)
      */
     public List<CandidatAvecVotesDTO> obtenirClassementCandidats() {
-        log.info("🏆 Calcul classement des candidats par votes");
+        log.info(" Calcul classement des candidats par votes");
 
         List<Candidat> candidatsOrdonnes = candidatRepository.findAllOrderByVoteCountDesc();
 
@@ -60,10 +60,10 @@ public class CandidatService {
     }
 
     /**
-     * 🔍 Trouver candidat par ID (vue électeur)
+     *  Trouver candidat par ID (vue électeur)
      */
     public CandidatDTO trouverCandidatParId(String externalId) {
-        log.info("🔍 Recherche candidat public: {}", externalId);
+        log.info(" Recherche candidat public: {}", externalId);
 
         return candidatRepository.findByExternalIdCandidat(externalId)
                 .map(candidatMapper::toDTO)
@@ -71,17 +71,17 @@ public class CandidatService {
     }
 
     /**
-     * 🔍 Rechercher candidats par nom (fonction recherche)
+     *  Rechercher candidats par nom (fonction recherche)
      */
     public List<CandidatDTO> rechercherCandidatsParNom(String nomPartiel) {
-        log.info("🔍 Recherche candidats par nom: '{}'", nomPartiel);
+        log.info(" Recherche candidats par nom: '{}'", nomPartiel);
 
         if (nomPartiel == null || nomPartiel.trim().isEmpty()) {
             return listerTousCandidats();
         }
 
         List<Candidat> candidatsTrouves = candidatRepository.findByUsernameContaining(nomPartiel.trim());
-        log.info("📊 {} candidats trouvés pour '{}'", candidatsTrouves.size(), nomPartiel);
+        log.info(" {} candidats trouvés pour '{}'", candidatsTrouves.size(), nomPartiel);
 
         return candidatsTrouves.stream()
                 .map(candidatMapper::toDTO)
@@ -91,10 +91,10 @@ public class CandidatService {
     // ==================== GESTION CAMPAGNES ====================
 
     /**
-     * 📢 Obtenir toutes les campagnes d'un candidat
+     *  Obtenir toutes les campagnes d'un candidat
      */
     public List<CampagneDTO> obtenirCampagnesCandidat(String candidatId) {
-        log.info("📢 Consultation campagnes du candidat: {}", candidatId);
+        log.info("Consultation campagnes du candidat: {}", candidatId);
 
         // Vérifier que le candidat existe
         candidatRepository.findByExternalIdCandidat(candidatId)
@@ -103,7 +103,7 @@ public class CandidatService {
         List<com.personnal.electronicvoting.model.Campagne> campagnes =
                 campagneRepository.findByCandidat_ExternalIdCandidat(candidatId);
 
-        log.info("📊 {} campagnes trouvées pour le candidat {}", campagnes.size(), candidatId);
+        log.info(" {} campagnes trouvées pour le candidat {}", campagnes.size(), candidatId);
 
         return campagnes.stream()
                 .map(campagneMapper::toDTO)
@@ -113,10 +113,10 @@ public class CandidatService {
     // ==================== STATISTIQUES CANDIDATS ====================
 
     /**
-     * 📊 Obtenir détails complets d'un candidat avec statistiques
+     *  Obtenir détails complets d'un candidat avec statistiques
      */
     public CandidatDetailDTO obtenirDetailCandidat(String candidatId) {
-        log.info("📊 Consultation détails candidat: {}", candidatId);
+        log.info(" Consultation détails candidat: {}", candidatId);
 
         Candidat candidat = candidatRepository.findByExternalIdCandidat(candidatId)
                 .orElseThrow(() -> new RuntimeException("Candidat non trouvé: " + candidatId));
@@ -136,10 +136,10 @@ public class CandidatService {
     }
 
     /**
-     * 🏆 Obtenir le candidat en tête
+     * Obtenir le candidat en tête
      */
     public CandidatAvecVotesDTO obtenirCandidatEnTete() {
-        log.info("🏆 Recherche candidat en tête");
+        log.info(" Recherche candidat en tête");
 
         List<CandidatAvecVotesDTO> classement = obtenirClassementCandidats();
 
@@ -148,22 +148,22 @@ public class CandidatService {
         }
 
         CandidatAvecVotesDTO premier = classement.get(0);
-        log.info("🏆 Candidat en tête: {} avec {} votes",
+        log.info(" Candidat en tête: {} avec {} votes",
                 premier.getCandidat().getUsername(), premier.getNombreVotes());
 
         return premier;
     }
 
     /**
-     * 📊 Vérifier si un candidat peut être supprimé (aucun vote)
+     *  Vérifier si un candidat peut être supprimé (aucun vote)
      */
     public boolean peutEtreSupprime(String candidatId) {
-        log.info("🔍 Vérification suppression possible pour candidat: {}", candidatId);
+        log.info(" Vérification suppression possible pour candidat: {}", candidatId);
 
         long nombreVotes = candidatRepository.countVotesByCandidat(candidatId);
         boolean supprimable = nombreVotes == 0;
 
-        log.info("📊 Candidat {} - {} votes - Supprimable: {}",
+        log.info(" Candidat {} - {} votes - Supprimable: {}",
                 candidatId, nombreVotes, supprimable);
 
         return supprimable;
@@ -172,7 +172,7 @@ public class CandidatService {
     // ==================== DTOs SPÉCIFIQUES ====================
 
     /**
-     * 📊 DTO pour candidat avec nombre de votes
+     *  DTO pour candidat avec nombre de votes
      */
     @lombok.Data
     @lombok.Builder
@@ -184,7 +184,7 @@ public class CandidatService {
     }
 
     /**
-     * 📊 DTO pour détails complets d'un candidat
+     *  DTO pour détails complets d'un candidat
      */
     @lombok.Data
     @lombok.Builder
@@ -197,7 +197,7 @@ public class CandidatService {
     }
 
     /**
-     * 📊 DTO pour statistiques de campagne
+     *  DTO pour statistiques de campagne
      */
     @lombok.Data
     @lombok.Builder
@@ -213,10 +213,10 @@ public class CandidatService {
     }
 
     /**
-     * 📊 Obtenir statistiques détaillées de tous les candidats
+     *  Obtenir statistiques détaillées de tous les candidats
      */
     public List<StatistiquesCandidatDTO> obtenirStatistiquesDetaillees() {
-        log.info("📊 Calcul statistiques détaillées de tous les candidats");
+        log.info(" Calcul statistiques détaillées de tous les candidats");
 
         List<Candidat> tousLesCandidats = candidatRepository.findAll();
         long totalVotes = voteRepository.count();
@@ -246,7 +246,7 @@ public class CandidatService {
             statistiques.get(i).setRang(i + 1);
         }
 
-        log.info("📊 Statistiques calculées pour {} candidats", statistiques.size());
+        log.info(" Statistiques calculées pour {} candidats", statistiques.size());
         return statistiques;
     }
 }

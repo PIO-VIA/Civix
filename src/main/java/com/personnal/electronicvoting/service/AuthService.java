@@ -23,29 +23,29 @@ public class AuthService {
     // ==================== AUTHENTIFICATION ÉLECTEUR ====================
 
     /**
-     * 🔐 Authentification électeur avec identifiants reçus par email
+     *  Authentification électeur avec identifiants reçus par email
      */
     public AuthResponse authentifierElecteur(LoginRequest request) {
-        log.info("🔐 Tentative connexion électeur - Email: {}", request.getEmail());
+        log.info(" Tentative connexion électeur - Email: {}", request.getEmail());
 
         try {
-            // 🔍 Recherche électeur par email
+            //  Recherche électeur par email
             Electeur electeur = electeurRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> {
-                        log.warn("⚠️ Tentative connexion email électeur inexistant: {}", request.getEmail());
+                        log.warn(" Tentative connexion email électeur inexistant: {}", request.getEmail());
                         return new RuntimeException("Identifiants invalides");
                     });
 
-            // 🔒 Vérification mot de passe
+            //  Vérification mot de passe
             if (!passwordEncoder.matches(request.getMotDePasse(), electeur.getMotDePasse())) {
-                log.warn("⚠️ Tentative connexion mot de passe électeur incorrect: {}", request.getEmail());
+                log.warn(" Tentative connexion mot de passe électeur incorrect: {}", request.getEmail());
                 return null;
             }
 
-            log.info("✅ Connexion électeur réussie - ID: {}, Username: {}",
+            log.info(" Connexion électeur réussie - ID: {}, Username: {}",
                     electeur.getExternalIdElecteur(), electeur.getUsername());
 
-            // 🎫 Génération "token" (simplifié pour l'instant)
+            //  Génération "token" (simplifié pour l'instant)
             String token = genererTokenElecteur(electeur);
 
             return AuthResponse.builder()
@@ -61,7 +61,7 @@ public class AuthService {
         } catch (RuntimeException e) {
             throw e; // Re-lancer les erreurs métier
         } catch (Exception e) {
-            log.error("💥 Erreur authentification électeur: {}", e.getMessage(), e);
+            log.error(" Erreur authentification électeur: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de l'authentification", e);
         }
     }
@@ -69,29 +69,29 @@ public class AuthService {
     // ==================== AUTHENTIFICATION ADMINISTRATEUR ====================
 
     /**
-     * 🔐 Authentification administrateur
+     *  Authentification administrateur
      */
     public AuthResponse authentifierAdministrateur(LoginRequest request) {
-        log.info("🔐 Tentative connexion admin - Email: {}", request.getEmail());
+        log.info(" Tentative connexion admin - Email: {}", request.getEmail());
 
         try {
             // 🔍 Recherche admin par email
             Administrateur admin = administrateurRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> {
-                        log.warn("⚠️ Tentative connexion email admin inexistant: {}", request.getEmail());
+                        log.warn(" Tentative connexion email admin inexistant: {}", request.getEmail());
                         return new RuntimeException("Identifiants invalides");
                     });
 
-            // 🔒 Vérification mot de passe
+            //  Vérification mot de passe
             if (!passwordEncoder.matches(request.getMotDePasse(), admin.getMotDePasse())) {
-                log.warn("⚠️ Tentative connexion mot de passe admin incorrect: {}", request.getEmail());
+                log.warn(" Tentative connexion mot de passe admin incorrect: {}", request.getEmail());
                 throw new RuntimeException("Identifiants invalides");
             }
 
-            log.info("✅ Connexion admin réussie - ID: {}, Username: {}",
+            log.info(" Connexion admin réussie - ID: {}, Username: {}",
                     admin.getExternalIdAdministrateur(), admin.getUsername());
 
-            // 🎫 Génération "token" admin
+            //  Génération "token" admin
             String token = genererTokenAdmin(admin);
 
             return AuthResponse.builder()
@@ -107,7 +107,7 @@ public class AuthService {
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur authentification admin: {}", e.getMessage(), e);
+            log.error(" Erreur authentification admin: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de l'authentification", e);
         }
     }
@@ -115,10 +115,10 @@ public class AuthService {
     // ==================== GESTION SESSIONS / TOKENS ====================
 
     /**
-     * ✅ Vérifier si un token électeur est valide
+     * Vérifier si un token électeur est valide
      */
     /**
-     * ✅ Vérifier si un token admin est valide (CORRIGÉ)
+     * Vérifier si un token admin est valide (CORRIGÉ)
      */
     public boolean verifierTokenAdmin(String token) {
         try {
@@ -170,7 +170,7 @@ public class AuthService {
     }
 
     /**
-     * 🔍 Obtenir admin depuis token (CORRIGÉ)
+     *  Obtenir admin depuis token (CORRIGÉ)
      */
     public Administrateur obtenirAdminDepuisToken(String token) {
         if (!verifierTokenAdmin(token)) {
@@ -187,7 +187,7 @@ public class AuthService {
     }
 
     /**
-     * 🔍 Obtenir électeur depuis token (CORRIGÉ)
+     * Obtenir électeur depuis token (CORRIGÉ)
      */
     public Electeur obtenirElecteurDepuisToken(String token) {
         if (!verifierTokenElecteur(token)) {
@@ -205,11 +205,11 @@ public class AuthService {
     // ==================== CHANGEMENT MOT DE PASSE ====================
 
     /**
-     * 🔑 Changer mot de passe électeur (première connexion)
+     *  Changer mot de passe électeur (première connexion)
      */
     @Transactional
     public AuthResponse changerMotDePasseElecteur(String token, String ancienMotDePasse, String nouveauMotDePasse) {
-        log.info("🔑 Changement mot de passe électeur");
+        log.info(" Changement mot de passe électeur");
 
         try {
             Electeur electeur = obtenirElecteurDepuisToken(token);
@@ -226,7 +226,7 @@ public class AuthService {
             electeur.setMotDePasse(passwordEncoder.encode(nouveauMotDePasse));
             electeurRepository.save(electeur);
 
-            log.info("✅ Mot de passe électeur changé - ID: {}", electeur.getExternalIdElecteur());
+            log.info(" Mot de passe électeur changé - ID: {}", electeur.getExternalIdElecteur());
 
             // Retourner nouvelle auth response
             return AuthResponse.builder()
@@ -242,7 +242,7 @@ public class AuthService {
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur changement mot de passe électeur: {}", e.getMessage(), e);
+            log.error(" Erreur changement mot de passe électeur: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors du changement de mot de passe", e);
         }
     }
@@ -250,8 +250,8 @@ public class AuthService {
     // ==================== UTILITAIRES ====================
 
     /**
-     * 🎫 Génération token électeur (simplifié)
-     * 🔮 Future : JWT avec expiration, claims, etc.
+     *  Génération token électeur (simplifié)
+     *  Future : JWT avec expiration, claims, etc.
      */
     private String genererTokenElecteur(Electeur electeur) {
         // Token simplifié pour l'apprentissage
@@ -259,23 +259,23 @@ public class AuthService {
     }
 
     /**
-     * 🎫 Génération token admin
+     *  Génération token admin
      */
     private String genererTokenAdmin(Administrateur admin) {
         return "ADMIN-" + admin.getExternalIdAdministrateur() + "-" + System.currentTimeMillis();
     }
 
     /**
-     * 🔍 Déterminer si c'est une première connexion (mot de passe temporaire)
+     * Déterminer si c'est une première connexion (mot de passe temporaire)
      */
     private boolean isMotDePasseTemporaire(Electeur electeur) {
         // Logique simple : si le mot de passe contient certains patterns
-        // 🔮 Future : flag en base ou vérification plus sophistiquée
+        //  Future : flag en base ou vérification plus sophistiquée
         return true; // Pour l'instant, on assume que c'est toujours temporaire
     }
 
     /**
-     * ✅ Validation nouveau mot de passe
+     *  Validation nouveau mot de passe
      */
     private void validerNouveauMotDePasse(String motDePasse) {
         if (motDePasse == null || motDePasse.length() < 8) {

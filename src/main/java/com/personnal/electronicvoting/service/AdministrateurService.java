@@ -40,22 +40,22 @@ public class AdministrateurService {
     // ==================== GESTION ÉLECTEURS ====================
 
     /**
-     * 👥 Créer un électeur avec envoi automatique des identifiants
+     *  Créer un électeur avec envoi automatique des identifiants
      */
     public ElecteurDTO creerElecteur(CreateElecteurAdminRequest request) {
-        log.info("👥 Création électeur par admin - Username: {}, Email: {}",
+        log.info(" Création électeur par admin - Username: {}, Email: {}",
                 request.getUsername(), request.getEmail());
 
         try {
-            // 🔍 Vérifications uniques
+            //  Vérifications uniques
             if (electeurRepository.existsByEmail(request.getEmail())) {
                 throw new RuntimeException("Un électeur avec cet email existe déjà");
             }
 
-            // 🎲 Génération mot de passe temporaire
+            //  Génération mot de passe temporaire
             String motDePasseTemporaire = passwordGenerator.genererMotDePasseTemporaire();
 
-            // 👤 Création électeur
+            //  Création électeur
             Electeur electeur = new Electeur();
             electeur.setUsername(request.getUsername());
             electeur.setEmail(request.getEmail());
@@ -65,30 +65,30 @@ public class AdministrateurService {
 
             Electeur electeurSauve = electeurRepository.save(electeur);
 
-            // 📧 Envoi des identifiants par email
+            //  Envoi des identifiants par email
             emailService.envoyerIdentifiantsElecteur(
                     request.getEmail(),
                     request.getUsername(),
                     motDePasseTemporaire
             );
 
-            log.info("✅ Électeur créé avec succès - ID: {}", electeurSauve.getExternalIdElecteur());
+            log.info(" Électeur créé avec succès - ID: {}", electeurSauve.getExternalIdElecteur());
             return userMapper.toDTO(electeurSauve);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur création électeur: {}", e.getMessage(), e);
+            log.error(" Erreur création électeur: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la création de l'électeur", e);
         }
     }
 
     /**
-     * 📋 Lister tous les électeurs
+     *  Lister tous les électeurs
      */
     @Transactional(readOnly = true)
     public List<ElecteurDTO> listerElecteurs() {
-        log.info("📋 Admin - Liste de tous les électeurs");
+        log.info(" Admin - Liste de tous les électeurs");
         return electeurRepository.findAll()
                 .stream()
                 .map(userMapper::toDTO)
@@ -96,27 +96,27 @@ public class AdministrateurService {
     }
 
     /**
-     * 🔍 Trouver électeur par ID
+     *  Trouver électeur par ID
      */
     @Transactional(readOnly = true)
     public ElecteurDTO trouverElecteur(String externalId) {
-        log.info("🔍 Admin - Recherche électeur: {}", externalId);
+        log.info(" Admin - Recherche électeur: {}", externalId);
         return electeurRepository.findByExternalIdElecteur(externalId)
                 .map(userMapper::toDTO)
                 .orElseThrow(() -> new RuntimeException("Électeur non trouvé: " + externalId));
     }
 
     /**
-     * ✏️ Modifier un électeur
+     * Modifier un électeur
      */
     public ElecteurDTO modifierElecteur(String externalId, UpdateElecteurRequest request) {
-        log.info("✏️ Admin - Modification électeur: {}", externalId);
+        log.info(" Admin - Modification électeur: {}", externalId);
 
         try {
             Electeur electeur = electeurRepository.findByExternalIdElecteur(externalId)
                     .orElseThrow(() -> new RuntimeException("Électeur non trouvé"));
 
-            // 📝 Mise à jour des champs (si fournis)
+            //  Mise à jour des champs (si fournis)
             if (request.getUsername() != null && !request.getUsername().trim().isEmpty()) {
                 electeur.setUsername(request.getUsername().trim());
             }
@@ -130,7 +130,7 @@ public class AdministrateurService {
                 electeur.setEmail(request.getEmail().trim());
             }
 
-            // 🔑 Reset mot de passe si demandé
+            //  Reset mot de passe si demandé
             if (request.isResetMotDePasse()) {
                 String nouveauMotDePasse = passwordGenerator.genererMotDePasseTemporaire();
                 electeur.setMotDePasse(passwordEncoder.encode(nouveauMotDePasse));
@@ -141,45 +141,45 @@ public class AdministrateurService {
                         electeur.getUsername(),
                         nouveauMotDePasse
                 );
-                log.info("🔑 Mot de passe réinitialisé pour électeur: {}", externalId);
+                log.info(" Mot de passe réinitialisé pour électeur: {}", externalId);
             }
 
             Electeur electeurMisAJour = electeurRepository.save(electeur);
-            log.info("✅ Électeur modifié avec succès: {}", externalId);
+            log.info(" Électeur modifié avec succès: {}", externalId);
 
             return userMapper.toDTO(electeurMisAJour);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur modification électeur: {}", e.getMessage(), e);
+            log.error(" Erreur modification électeur: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la modification", e);
         }
     }
 
     /**
-     * 🗑️ Supprimer un électeur
+     *  Supprimer un électeur
      */
     public void supprimerElecteur(String externalId) {
-        log.info("🗑️ Admin - Suppression électeur: {}", externalId);
+        log.info(" Admin - Suppression électeur: {}", externalId);
 
         try {
             Electeur electeur = electeurRepository.findByExternalIdElecteur(externalId)
                     .orElseThrow(() -> new RuntimeException("Électeur non trouvé"));
 
-            // ⚠️ Vérifier si l'électeur a voté (décision métier)
+            // ️ Vérifier si l'électeur a voté (décision métier)
             if (electeur.isAVote()) {
-                log.warn("⚠️ Tentative suppression électeur ayant voté: {}", externalId);
+                log.warn("️ Tentative suppression électeur ayant voté: {}", externalId);
                 throw new RuntimeException("Impossible de supprimer un électeur qui a voté");
             }
 
             electeurRepository.delete(electeur);
-            log.info("✅ Électeur supprimé avec succès: {}", externalId);
+            log.info(" Électeur supprimé avec succès: {}", externalId);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur suppression électeur: {}", e.getMessage(), e);
+            log.error(" Erreur suppression électeur: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la suppression", e);
         }
     }
@@ -187,10 +187,10 @@ public class AdministrateurService {
     // ==================== GESTION CANDIDATS ====================
 
     /**
-     * 🏆 Créer un candidat
+     *  Créer un candidat
      */
     public CandidatDTO creerCandidat(CreateCandidatRequest request) {
-        log.info("🏆 Création candidat par admin - Username: {}", request.getUsername());
+        log.info(" Création candidat par admin - Username: {}", request.getUsername());
 
         try {
             if (candidatRepository.existsByUsername(request.getUsername())) {
@@ -201,24 +201,24 @@ public class AdministrateurService {
             candidat.setUsername(request.getUsername());
 
             Candidat candidatSauve = candidatRepository.save(candidat);
-            log.info("✅ Candidat créé avec succès - ID: {}", candidatSauve.getExternalIdCandidat());
+            log.info(" Candidat créé avec succès - ID: {}", candidatSauve.getExternalIdCandidat());
 
             return candidatMapper.toDTO(candidatSauve);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur création candidat: {}", e.getMessage(), e);
+            log.error(" Erreur création candidat: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la création du candidat", e);
         }
     }
 
     /**
-     * 📋 Lister tous les candidats
+     *  Lister tous les candidats
      */
     @Transactional(readOnly = true)
     public List<CandidatDTO> listerCandidats() {
-        log.info("📋 Admin - Liste de tous les candidats");
+        log.info(" Admin - Liste de tous les candidats");
         return candidatRepository.findAll()
                 .stream()
                 .map(candidatMapper::toDTO)
@@ -226,10 +226,10 @@ public class AdministrateurService {
     }
 
     /**
-     * ✏️ Modifier un candidat
+     *  Modifier un candidat
      */
     public CandidatDTO modifierCandidat(String externalId, UpdateCandidatRequest request) {
-        log.info("✏️ Admin - Modification candidat: {}", externalId);
+        log.info(" Admin - Modification candidat: {}", externalId);
 
         try {
             Candidat candidat = candidatRepository.findByExternalIdCandidat(externalId)
@@ -245,43 +245,43 @@ public class AdministrateurService {
             }
 
             Candidat candidatMisAJour = candidatRepository.save(candidat);
-            log.info("✅ Candidat modifié avec succès: {}", externalId);
+            log.info(" Candidat modifié avec succès: {}", externalId);
 
             return candidatMapper.toDTO(candidatMisAJour);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur modification candidat: {}", e.getMessage(), e);
+            log.error(" Erreur modification candidat: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la modification", e);
         }
     }
 
     /**
-     * 🗑️ Supprimer un candidat
+     * ️ Supprimer un candidat
      */
     public void supprimerCandidat(String externalId) {
-        log.info("🗑️ Admin - Suppression candidat: {}", externalId);
+        log.info(" Admin - Suppression candidat: {}", externalId);
 
         try {
             Candidat candidat = candidatRepository.findByExternalIdCandidat(externalId)
                     .orElseThrow(() -> new RuntimeException("Candidat non trouvé"));
 
-            // ⚠️ Vérifier s'il a des votes (décision métier)
+            // ️ Vérifier s'il a des votes (décision métier)
             long nombreVotes = candidatRepository.countVotesByCandidat(externalId);
             if (nombreVotes > 0) {
-                log.warn("⚠️ Tentative suppression candidat avec votes: {} ({} votes)",
+                log.warn("️ Tentative suppression candidat avec votes: {} ({} votes)",
                         externalId, nombreVotes);
                 throw new RuntimeException("Impossible de supprimer un candidat qui a des votes");
             }
 
             candidatRepository.delete(candidat);
-            log.info("✅ Candidat supprimé avec succès: {}", externalId);
+            log.info(" Candidat supprimé avec succès: {}", externalId);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur suppression candidat: {}", e.getMessage(), e);
+            log.error(" Erreur suppression candidat: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la suppression", e);
         }
     }
@@ -289,10 +289,10 @@ public class AdministrateurService {
     // ==================== GESTION CAMPAGNES ====================
 
     /**
-     * 📢 Créer une campagne pour un candidat
+     *  Créer une campagne pour un candidat
      */
     public CampagneDTO creerCampagne(CreateCampagneRequest request) {
-        log.info("📢 Création campagne par admin - Candidat: {}", request.getCandidatId());
+        log.info(" Création campagne par admin - Candidat: {}", request.getCandidatId());
 
         try {
             Candidat candidat = candidatRepository.findByExternalIdCandidat(request.getCandidatId())
@@ -304,24 +304,24 @@ public class AdministrateurService {
             campagne.setCandidat(candidat);
 
             Campagne campagneSauvee = campagneRepository.save(campagne);
-            log.info("✅ Campagne créée avec succès - ID: {}", campagneSauvee.getExternalIdCampagne());
+            log.info(" Campagne créée avec succès - ID: {}", campagneSauvee.getExternalIdCampagne());
 
             return campagneMapper.toDTO(campagneSauvee);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur création campagne: {}", e.getMessage(), e);
+            log.error(" Erreur création campagne: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la création de la campagne", e);
         }
     }
 
     /**
-     * 📋 Lister toutes les campagnes
+     *  Lister toutes les campagnes
      */
     @Transactional(readOnly = true)
     public List<CampagneDTO> listerCampagnes() {
-        log.info("📋 Admin - Liste de toutes les campagnes");
+        log.info(" Admin - Liste de toutes les campagnes");
         return campagneRepository.findAll()
                 .stream()
                 .map(campagneMapper::toDTO)
@@ -329,10 +329,10 @@ public class AdministrateurService {
     }
 
     /**
-     * ✏️ Modifier une campagne
+     * ️ Modifier une campagne
      */
     public CampagneDTO modifierCampagne(String externalId, UpdateCampagneRequest request) {
-        log.info("✏️ Admin - Modification campagne: {}", externalId);
+        log.info("✏ Admin - Modification campagne: {}", externalId);
 
         try {
             Campagne campagne = campagneRepository.findByExternalIdCampagne(externalId)
@@ -347,35 +347,35 @@ public class AdministrateurService {
             }
 
             Campagne campagneMiseAJour = campagneRepository.save(campagne);
-            log.info("✅ Campagne modifiée avec succès: {}", externalId);
+            log.info(" Campagne modifiée avec succès: {}", externalId);
 
             return campagneMapper.toDTO(campagneMiseAJour);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur modification campagne: {}", e.getMessage(), e);
+            log.error(" Erreur modification campagne: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la modification", e);
         }
     }
 
     /**
-     * 🗑️ Supprimer une campagne
+     *  Supprimer une campagne
      */
     public void supprimerCampagne(String externalId) {
-        log.info("🗑️ Admin - Suppression campagne: {}", externalId);
+        log.info(" Admin - Suppression campagne: {}", externalId);
 
         try {
             Campagne campagne = campagneRepository.findByExternalIdCampagne(externalId)
                     .orElseThrow(() -> new RuntimeException("Campagne non trouvée"));
 
             campagneRepository.delete(campagne);
-            log.info("✅ Campagne supprimée avec succès: {}", externalId);
+            log.info(" Campagne supprimée avec succès: {}", externalId);
 
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("💥 Erreur suppression campagne: {}", e.getMessage(), e);
+            log.error(" Erreur suppression campagne: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la suppression", e);
         }
     }
@@ -383,11 +383,11 @@ public class AdministrateurService {
     // ==================== STATISTIQUES ====================
 
     /**
-     * 📊 Obtenir statistiques générales (pour tableau de bord admin)
+     *  Obtenir statistiques générales (pour tableau de bord admin)
      */
     @Transactional(readOnly = true)
     public StatistiquesAdminDTO obtenirStatistiques() {
-        log.info("📊 Admin - Calcul statistiques générales");
+        log.info(" Admin - Calcul statistiques générales");
 
         long totalElecteurs = electeurRepository.count();
         long electeursAyantVote = electeurRepository.findByaVoteTrue().size();
@@ -409,7 +409,7 @@ public class AdministrateurService {
     }
 
     /**
-     * 📊 DTO pour les statistiques admin
+     *  DTO pour les statistiques admin
      */
     @lombok.Data
     @lombok.Builder

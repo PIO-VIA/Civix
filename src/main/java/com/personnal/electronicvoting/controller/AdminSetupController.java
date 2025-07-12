@@ -76,21 +76,21 @@ public class AdminSetupController {
                             adminSauve.getExternalIdAdministrateur()));
 
         } catch (Exception e) {
-            log.error("💥 Erreur création premier admin: {}", e.getMessage(), e);
+            log.error(" Erreur création premier admin: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("❌ Erreur lors de la création de l'administrateur");
         }
     }
 
     /**
-     * ℹ️ Vérifier le statut du setup
+     * ️ Vérifier le statut du setup
      */
     @GetMapping("/status")
     @Operation(summary = "Statut setup",
             description = "Vérifier si la plateforme est initialisée")
     public ResponseEntity<SetupStatusDTO> obtenirStatutSetup() {
 
-        log.info("ℹ️ Vérification statut setup");
+        log.info(" Vérification statut setup");
 
         long nombreAdmins = administrateurRepository.count();
 
@@ -99,8 +99,8 @@ public class AdminSetupController {
                 .nombreAdministrateurs(nombreAdmins)
                 .peutCreerPremierAdmin(nombreAdmins == 0)
                 .message(nombreAdmins > 0 ?
-                        "✅ Plateforme initialisée avec " + nombreAdmins + " administrateur(s)" :
-                        "⚠️ Aucun administrateur. Utilisez POST /api/setup/first-admin pour initialiser")
+                        " Plateforme initialisée avec " + nombreAdmins + " administrateur(s)" :
+                        " Aucun administrateur. Utilisez POST /api/setup/first-admin pour initialiser")
                 .build();
 
         return ResponseEntity.ok(status);

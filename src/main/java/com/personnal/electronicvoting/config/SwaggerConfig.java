@@ -51,13 +51,13 @@ public class SwaggerConfig {
                                 3. **Voter** : `POST /api/votes/effectuer` (électeurs authentifiés)
                                 4. **Administrer** : `GET /api/admin/dashboard` (admins)
                                 
-                                ### 📱 Réponses API
+                                ###  Réponses API
                                 Toutes les réponses suivent un format JSON standard avec gestion d'erreurs appropriée.
                                 """)
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("Équipe Technique")
-                                .email("tech@platformevote.com")
+                                .email("piodjiele@gmail.com")
                                 .url("https://github.com/votre-repo/electronic-voting"))
                         .license(new License()
                                 .name("MIT License")

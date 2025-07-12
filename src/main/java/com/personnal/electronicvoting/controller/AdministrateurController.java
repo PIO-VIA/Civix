@@ -31,7 +31,7 @@ public class AdministrateurController {
     // ==================== MIDDLEWARE SÉCURITÉ ====================
 
     /**
-     * 🔒 Vérifier token admin dans les headers
+     * Vérifier token admin dans les headers
      */
     private void verifierTokenAdmin(String token) {
         String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
@@ -43,7 +43,7 @@ public class AdministrateurController {
     // ==================== GESTION ÉLECTEURS ====================
 
     /**
-     * 👥 Créer un électeur
+     *  Créer un électeur
      */
     @PostMapping("/electeurs")
     @Operation(summary = "Créer électeur",
@@ -52,7 +52,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody CreateElecteurAdminRequest request) {
 
-        log.info("👥 Admin - Création électeur: {}", request.getUsername());
+        log.info(" Admin - Création électeur: {}", request.getUsername());
 
         try {
             verifierTokenAdmin(token);
@@ -61,13 +61,13 @@ public class AdministrateurController {
             return ResponseEntity.status(HttpStatus.CREATED).body(electeur);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur création électeur: {}", e.getMessage());
+            log.warn(" Erreur création électeur: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     /**
-     * 📋 Lister tous les électeurs avec pagination
+     *  Lister tous les électeurs avec pagination
      */
     @GetMapping("/electeurs")
     @Operation(summary = "Lister électeurs",
@@ -77,7 +77,7 @@ public class AdministrateurController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
-        log.info("📋 Admin - Liste électeurs (page: {}, size: {})", page, size);
+        log.info(" Admin - Liste électeurs (page: {}, size: {})", page, size);
 
         try {
             verifierTokenAdmin(token);
@@ -86,13 +86,13 @@ public class AdministrateurController {
             return ResponseEntity.ok(electeurs);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur liste électeurs: {}", e.getMessage());
+            log.warn(" Erreur liste électeurs: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     /**
-     * 🔍 Obtenir un électeur par ID
+     *  Obtenir un électeur par ID
      */
     @GetMapping("/electeurs/{electeurId}")
     @Operation(summary = "Obtenir électeur",
@@ -101,7 +101,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @PathVariable String electeurId) {
 
-        log.info("🔍 Admin - Consultation électeur: {}", electeurId);
+        log.info(" Admin - Consultation électeur: {}", electeurId);
 
         try {
             verifierTokenAdmin(token);
@@ -110,13 +110,13 @@ public class AdministrateurController {
             return ResponseEntity.ok(electeur);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Électeur non trouvé: {}", electeurId);
+            log.warn(" Électeur non trouvé: {}", electeurId);
             return ResponseEntity.notFound().build();
         }
     }
 
     /**
-     * ✏️ Modifier un électeur
+     *  Modifier un électeur
      */
     @PutMapping("/electeurs/{electeurId}")
     @Operation(summary = "Modifier électeur",
@@ -126,7 +126,7 @@ public class AdministrateurController {
             @PathVariable String electeurId,
             @Valid @RequestBody UpdateElecteurRequest request) {
 
-        log.info("✏️ Admin - Modification électeur: {}", electeurId);
+        log.info("️ Admin - Modification électeur: {}", electeurId);
 
         try {
             verifierTokenAdmin(token);
@@ -135,13 +135,13 @@ public class AdministrateurController {
             return ResponseEntity.ok(electeur);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur modification électeur: {}", e.getMessage());
+            log.warn(" Erreur modification électeur: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     /**
-     * 🗑️ Supprimer un électeur
+     *  Supprimer un électeur
      */
     @DeleteMapping("/electeurs/{electeurId}")
     @Operation(summary = "Supprimer électeur",
@@ -150,7 +150,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @PathVariable String electeurId) {
 
-        log.info("🗑️ Admin - Suppression électeur: {}", electeurId);
+        log.info(" Admin - Suppression électeur: {}", electeurId);
 
         try {
             verifierTokenAdmin(token);
@@ -159,7 +159,7 @@ public class AdministrateurController {
             return ResponseEntity.noContent().build();
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur suppression électeur: {}", e.getMessage());
+            log.warn(" Erreur suppression électeur: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -167,7 +167,7 @@ public class AdministrateurController {
     // ==================== GESTION CANDIDATS ====================
 
     /**
-     * 🏆 Créer un candidat
+     *  Créer un candidat
      */
     @PostMapping("/candidats")
     @Operation(summary = "Créer candidat",
@@ -176,7 +176,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody CreateCandidatRequest request) {
 
-        log.info("🏆 Admin - Création candidat: {}", request.getUsername());
+        log.info(" Admin - Création candidat: {}", request.getUsername());
 
         try {
             verifierTokenAdmin(token);
@@ -185,13 +185,13 @@ public class AdministrateurController {
             return ResponseEntity.status(HttpStatus.CREATED).body(candidat);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur création candidat: {}", e.getMessage());
+            log.warn(" Erreur création candidat: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     /**
-     * 📋 Lister tous les candidats
+     *  Lister tous les candidats
      */
     @GetMapping("/candidats")
     @Operation(summary = "Lister candidats",
@@ -199,7 +199,7 @@ public class AdministrateurController {
     public ResponseEntity<List<CandidatDTO>> listerCandidats(
             @RequestHeader("Authorization") String token) {
 
-        log.info("📋 Admin - Liste candidats");
+        log.info(" Admin - Liste candidats");
 
         try {
             verifierTokenAdmin(token);
@@ -208,13 +208,13 @@ public class AdministrateurController {
             return ResponseEntity.ok(candidats);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur liste candidats: {}", e.getMessage());
+            log.warn("Erreur liste candidats: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     /**
-     * ✏️ Modifier un candidat
+     *  Modifier un candidat
      */
     @PutMapping("/candidats/{candidatId}")
     @Operation(summary = "Modifier candidat",
@@ -224,7 +224,7 @@ public class AdministrateurController {
             @PathVariable String candidatId,
             @Valid @RequestBody UpdateCandidatRequest request) {
 
-        log.info("✏️ Admin - Modification candidat: {}", candidatId);
+        log.info("️ Admin - Modification candidat: {}", candidatId);
 
         try {
             verifierTokenAdmin(token);
@@ -233,13 +233,13 @@ public class AdministrateurController {
             return ResponseEntity.ok(candidat);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur modification candidat: {}", e.getMessage());
+            log.warn(" Erreur modification candidat: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     /**
-     * 🗑️ Supprimer un candidat
+     *  Supprimer un candidat
      */
     @DeleteMapping("/candidats/{candidatId}")
     @Operation(summary = "Supprimer candidat",
@@ -248,7 +248,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @PathVariable String candidatId) {
 
-        log.info("🗑️ Admin - Suppression candidat: {}", candidatId);
+        log.info(" Admin - Suppression candidat: {}", candidatId);
 
         try {
             verifierTokenAdmin(token);
@@ -257,7 +257,7 @@ public class AdministrateurController {
             return ResponseEntity.noContent().build();
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur suppression candidat: {}", e.getMessage());
+            log.warn(" Erreur suppression candidat: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -265,7 +265,7 @@ public class AdministrateurController {
     // ==================== GESTION CAMPAGNES ====================
 
     /**
-     * 📢 Créer une campagne
+     *  Créer une campagne
      */
     @PostMapping("/campagnes")
     @Operation(summary = "Créer campagne",
@@ -274,7 +274,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody CreateCampagneRequest request) {
 
-        log.info("📢 Admin - Création campagne pour candidat: {}", request.getCandidatId());
+        log.info(" Admin - Création campagne pour candidat: {}", request.getCandidatId());
 
         try {
             verifierTokenAdmin(token);
@@ -283,13 +283,13 @@ public class AdministrateurController {
             return ResponseEntity.status(HttpStatus.CREATED).body(campagne);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur création campagne: {}", e.getMessage());
+            log.warn(" Erreur création campagne: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     /**
-     * 📋 Lister toutes les campagnes
+     *  Lister toutes les campagnes
      */
     @GetMapping("/campagnes")
     @Operation(summary = "Lister campagnes",
@@ -297,7 +297,7 @@ public class AdministrateurController {
     public ResponseEntity<List<CampagneDTO>> listerCampagnes(
             @RequestHeader("Authorization") String token) {
 
-        log.info("📋 Admin - Liste campagnes");
+        log.info(" Admin - Liste campagnes");
 
         try {
             verifierTokenAdmin(token);
@@ -306,13 +306,13 @@ public class AdministrateurController {
             return ResponseEntity.ok(campagnes);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur liste campagnes: {}", e.getMessage());
+            log.warn(" Erreur liste campagnes: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     /**
-     * ✏️ Modifier une campagne
+     * ️ Modifier une campagne
      */
     @PutMapping("/campagnes/{campagneId}")
     @Operation(summary = "Modifier campagne",
@@ -322,7 +322,7 @@ public class AdministrateurController {
             @PathVariable String campagneId,
             @Valid @RequestBody UpdateCampagneRequest request) {
 
-        log.info("✏️ Admin - Modification campagne: {}", campagneId);
+        log.info("️ Admin - Modification campagne: {}", campagneId);
 
         try {
             verifierTokenAdmin(token);
@@ -331,13 +331,13 @@ public class AdministrateurController {
             return ResponseEntity.ok(campagne);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur modification campagne: {}", e.getMessage());
+            log.warn(" Erreur modification campagne: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     /**
-     * 🗑️ Supprimer une campagne
+     *  Supprimer une campagne
      */
     @DeleteMapping("/campagnes/{campagneId}")
     @Operation(summary = "Supprimer campagne",
@@ -346,7 +346,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @PathVariable String campagneId) {
 
-        log.info("🗑️ Admin - Suppression campagne: {}", campagneId);
+        log.info(" Admin - Suppression campagne: {}", campagneId);
 
         try {
             verifierTokenAdmin(token);
@@ -355,7 +355,7 @@ public class AdministrateurController {
             return ResponseEntity.noContent().build();
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur suppression campagne: {}", e.getMessage());
+            log.warn(" Erreur suppression campagne: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -363,7 +363,7 @@ public class AdministrateurController {
     // ==================== TABLEAU DE BORD ADMINISTRATEUR ====================
 
     /**
-     * 📊 Tableau de bord administrateur
+     *  Tableau de bord administrateur
      */
     @GetMapping("/dashboard")
     @Operation(summary = "Tableau de bord admin",
@@ -371,7 +371,7 @@ public class AdministrateurController {
     public ResponseEntity<AdministrateurService.StatistiquesAdminDTO> obtenirTableauBord(
             @RequestHeader("Authorization") String token) {
 
-        log.info("📊 Admin - Consultation tableau de bord");
+        log.info(" Admin - Consultation tableau de bord");
 
         try {
             verifierTokenAdmin(token);
@@ -380,7 +380,7 @@ public class AdministrateurController {
             return ResponseEntity.ok(stats);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur tableau de bord: {}", e.getMessage());
+            log.warn(" Erreur tableau de bord: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -388,7 +388,7 @@ public class AdministrateurController {
     // ==================== ACTIONS EN MASSE ====================
 
     /**
-     * 📧 Renvoyer identifiants à un électeur
+     *  Renvoyer identifiants à un électeur
      */
     @PostMapping("/electeurs/{electeurId}/resend-credentials")
     @Operation(summary = "Renvoyer identifiants",
@@ -397,7 +397,7 @@ public class AdministrateurController {
             @RequestHeader("Authorization") String token,
             @PathVariable String electeurId) {
 
-        log.info("📧 Admin - Renvoi identifiants électeur: {}", electeurId);
+        log.info(" Admin - Renvoi identifiants électeur: {}", electeurId);
 
         try {
             verifierTokenAdmin(token);
@@ -411,13 +411,13 @@ public class AdministrateurController {
             return ResponseEntity.ok("Nouveaux identifiants envoyés par email");
 
         } catch (RuntimeException e) {
-            log.warn("❌ Erreur renvoi identifiants: {}", e.getMessage());
+            log.warn(" Erreur renvoi identifiants: {}", e.getMessage());
             return ResponseEntity.badRequest().body("Erreur: " + e.getMessage());
         }
     }
 
     /**
-     * 📊 Export des données (CSV simple pour l'instant)
+     * Export des données (CSV simple pour l'instant)
      */
     @GetMapping("/export/electeurs")
     @Operation(summary = "Export électeurs",
@@ -425,7 +425,7 @@ public class AdministrateurController {
     public ResponseEntity<String> exporterElecteurs(
             @RequestHeader("Authorization") String token) {
 
-        log.info("📊 Admin - Export électeurs");
+        log.info(" Admin - Export électeurs");
 
         try {
             verifierTokenAdmin(token);

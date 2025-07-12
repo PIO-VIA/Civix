@@ -325,11 +325,11 @@ public class VoteService {
     }
 
     /**
-     * ✅ Obtenir statut de vote pour un électeur
+     * Obtenir statut de vote pour un électeur
      */
     @Transactional(readOnly = true)
     public StatutVoteElecteurDTO obtenirStatutVoteElecteur(String electeurId) {
-        log.info("✅ Consultation statut vote électeur: {}", electeurId);
+        log.info(" Consultation statut vote électeur: {}", electeurId);
 
         try {
             Electeur electeur = electeurRepository.findByExternalIdElecteur(electeurId)
@@ -343,8 +343,7 @@ public class VoteService {
 
             if (aVote) {
                 message = "Vous avez déjà voté. Merci pour votre participation !";
-                // Récupérer la date du vote si nécessaire
-                // dateVote = ... (requête pour récupérer la date)
+
             } else {
                 message = "Vous pouvez voter. Consultez les candidats et campagnes.";
             }
@@ -358,7 +357,7 @@ public class VoteService {
                     .build();
 
         } catch (Exception e) {
-            log.error("💥 Erreur consultation statut vote: {}", e.getMessage(), e);
+            log.error("Erreur consultation statut vote: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la consultation du statut", e);
         }
     }

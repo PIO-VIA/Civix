@@ -29,13 +29,13 @@ public class CampagneService {
     // ==================== CONSULTATION PUBLIQUE ====================
 
     /**
-     * 📋 Lister toutes les campagnes (vue électeur)
+     *  Lister toutes les campagnes (vue électeur)
      */
     public List<CampagneDTO> listerToutesCampagnes() {
-        log.info("📋 Consultation publique - Liste de toutes les campagnes");
+        log.info(" Consultation publique - Liste de toutes les campagnes");
 
         List<Campagne> campagnes = campagneRepository.findAll();
-        log.info("📊 {} campagnes trouvées", campagnes.size());
+        log.info(" {} campagnes trouvées", campagnes.size());
 
         return campagnes.stream()
                 .map(campagneMapper::toDTO)
@@ -43,10 +43,10 @@ public class CampagneService {
     }
 
     /**
-     * 🔍 Trouver campagne par ID
+     * Trouver campagne par ID
      */
     public CampagneDTO trouverCampagneParId(String externalId) {
-        log.info("🔍 Recherche campagne: {}", externalId);
+        log.info(" Recherche campagne: {}", externalId);
 
         return campagneRepository.findByExternalIdCampagne(externalId)
                 .map(campagneMapper::toDTO)
@@ -54,17 +54,17 @@ public class CampagneService {
     }
 
     /**
-     * 📢 Obtenir campagnes d'un candidat spécifique
+     *  Obtenir campagnes d'un candidat spécifique
      */
     public List<CampagneDTO> obtenirCampagnesParCandidat(String candidatId) {
-        log.info("📢 Recherche campagnes du candidat: {}", candidatId);
+        log.info(" Recherche campagnes du candidat: {}", candidatId);
 
         // Vérifier que le candidat existe
         candidatRepository.findByExternalIdCandidat(candidatId)
                 .orElseThrow(() -> new RuntimeException("Candidat non trouvé: " + candidatId));
 
         List<Campagne> campagnes = campagneRepository.findByCandidat_ExternalIdCandidat(candidatId);
-        log.info("📊 {} campagnes trouvées pour le candidat {}", campagnes.size(), candidatId);
+        log.info(" {} campagnes trouvées pour le candidat {}", campagnes.size(), candidatId);
 
         return campagnes.stream()
                 .map(campagneMapper::toDTO)
@@ -74,10 +74,10 @@ public class CampagneService {
     // ==================== CONSULTATION ENRICHIE ====================
 
     /**
-     * 📊 Obtenir toutes les campagnes avec informations candidat
+     * Obtenir toutes les campagnes avec informations candidat
      */
     public List<CampagneAvecCandidatDTO> obtenirCampagnesAvecCandidats() {
-        log.info("📊 Consultation campagnes avec informations candidats");
+        log.info("Consultation campagnes avec informations candidats");
 
         List<Campagne> campagnes = campagneRepository.findAll();
 
@@ -90,10 +90,10 @@ public class CampagneService {
     }
 
     /**
-     * 📋 Obtenir campagnes groupées par candidat
+     * Obtenir campagnes groupées par candidat
      */
     public Map<String, List<CampagneDTO>> obtenirCampagnesGroupeesParCandidat() {
-        log.info("📋 Regroupement des campagnes par candidat");
+        log.info(" Regroupement des campagnes par candidat");
 
         List<Campagne> toutesCampagnes = campagneRepository.findAll();
 
@@ -103,15 +103,15 @@ public class CampagneService {
                         Collectors.mapping(campagneMapper::toDTO, Collectors.toList())
                 ));
 
-        log.info("📊 Campagnes regroupées pour {} candidats", campagnesGroupees.size());
+        log.info(" Campagnes regroupées pour {} candidats", campagnesGroupees.size());
         return campagnesGroupees;
     }
 
     /**
-     * 🎯 Obtenir détails enrichis d'une campagne
+     *  Obtenir détails enrichis d'une campagne
      */
     public CampagneDetailDTO obtenirDetailCampagne(String campagneId) {
-        log.info("🎯 Consultation détails campagne: {}", campagneId);
+        log.info(" Consultation détails campagne: {}", campagneId);
 
         Campagne campagne = campagneRepository.findByExternalIdCampagne(campagneId)
                 .orElseThrow(() -> new RuntimeException("Campagne non trouvée: " + campagneId));
@@ -136,10 +136,10 @@ public class CampagneService {
     // ==================== RECHERCHE ET FILTRES ====================
 
     /**
-     * 🔍 Rechercher campagnes par mot-clé dans la description
+     *  Rechercher campagnes par mot-clé dans la description
      */
     public List<CampagneDTO> rechercherCampagnesParMotCle(String motCle) {
-        log.info("🔍 Recherche campagnes par mot-clé: '{}'", motCle);
+        log.info(" Recherche campagnes par mot-clé: '{}'", motCle);
 
         if (motCle == null || motCle.trim().isEmpty()) {
             return listerToutesCampagnes();
@@ -154,7 +154,7 @@ public class CampagneService {
                                 campagne.getCandidat().getUsername().toLowerCase().contains(motCleNormalise))
                 .toList();
 
-        log.info("📊 {} campagnes trouvées pour '{}'", campagnesTrouvees.size(), motCle);
+        log.info(" {} campagnes trouvées pour '{}'", campagnesTrouvees.size(), motCle);
 
         return campagnesTrouvees.stream()
                 .map(campagneMapper::toDTO)
@@ -162,10 +162,10 @@ public class CampagneService {
     }
 
     /**
-     * 📊 Obtenir campagnes avec photos uniquement
+     *  Obtenir campagnes avec photos uniquement
      */
     public List<CampagneDTO> obtenirCampagnesAvecPhotos() {
-        log.info("📊 Recherche campagnes avec photos");
+        log.info(" Recherche campagnes avec photos");
 
         List<Campagne> campagnesAvecPhotos = campagneRepository.findAll()
                 .stream()
@@ -173,7 +173,7 @@ public class CampagneService {
                         !campagne.getPhoto().trim().isEmpty())
                 .toList();
 
-        log.info("📊 {} campagnes avec photos trouvées", campagnesAvecPhotos.size());
+        log.info(" {} campagnes avec photos trouvées", campagnesAvecPhotos.size());
 
         return campagnesAvecPhotos.stream()
                 .map(campagneMapper::toDTO)
@@ -183,10 +183,10 @@ public class CampagneService {
     // ==================== STATISTIQUES ====================
 
     /**
-     * 📊 Obtenir statistiques des campagnes
+     *  Obtenir statistiques des campagnes
      */
     public StatistiquesCampagnesDTO obtenirStatistiquesCampagnes() {
-        log.info("📊 Calcul statistiques des campagnes");
+        log.info(" Calcul statistiques des campagnes");
 
         List<Campagne> toutesCampagnes = campagneRepository.findAll();
         long totalCampagnes = toutesCampagnes.size();
@@ -218,10 +218,10 @@ public class CampagneService {
     }
 
     /**
-     * 📊 Obtenir répartition des campagnes par candidat
+     *  Obtenir répartition des campagnes par candidat
      */
     public List<RepartitionCampagnesDTO> obtenirRepartitionParCandidat() {
-        log.info("📊 Calcul répartition campagnes par candidat");
+        log.info(" Calcul répartition campagnes par candidat");
 
         Map<String, List<CampagneDTO>> repartition = obtenirCampagnesGroupeesParCandidat();
 
@@ -249,7 +249,7 @@ public class CampagneService {
     // ==================== DTOs SPÉCIFIQUES ====================
 
     /**
-     * 📊 DTO pour campagne avec candidat
+     *  DTO pour campagne avec candidat
      */
     @lombok.Data
     @lombok.Builder
@@ -261,7 +261,7 @@ public class CampagneService {
     }
 
     /**
-     * 📊 DTO pour détails complets d'une campagne
+     * DTO pour détails complets d'une campagne
      */
     @lombok.Data
     @lombok.Builder
@@ -275,7 +275,7 @@ public class CampagneService {
     }
 
     /**
-     * 📊 DTO pour statistiques des campagnes
+     *  DTO pour statistiques des campagnes
      */
     @lombok.Data
     @lombok.Builder
@@ -290,7 +290,7 @@ public class CampagneService {
     }
 
     /**
-     * 📊 DTO pour répartition des campagnes par candidat
+     *  DTO pour répartition des campagnes par candidat
      */
     @lombok.Data
     @lombok.Builder

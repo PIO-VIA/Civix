@@ -15,10 +15,10 @@ public class EmailService {
     private final JavaMailSender mailSender;
 
     /**
-     * 📧 Envoyer identifiants à un nouvel électeur
+     * Envoyer identifiants à un nouvel électeur
      */
     public void envoyerIdentifiantsElecteur(String email, String username, String motDePasseTemporaire) {
-        log.info("📧 Envoi identifiants électeur à: {}", email);
+        log.info(" Envoi identifiants électeur à: {}", email);
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -31,52 +31,52 @@ public class EmailService {
             log.info("✅ Email identifiants envoyé avec succès à: {}", email);
 
         } catch (Exception e) {
-            log.error("💥 Erreur envoi email identifiants à {}: {}", email, e.getMessage(), e);
+            log.error(" Erreur envoi email identifiants à {}: {}", email, e.getMessage(), e);
             // ✅ RuntimeException simple et claire
             throw new RuntimeException("Erreur lors de l'envoi de l'email à: " + email, e);
         }
     }
 
     /**
-     * 📧 Envoyer nouveau mot de passe en cas de reset
+     *  Envoyer nouveau mot de passe en cas de reset
      */
     public void envoyerNouveauMotDePasse(String email, String username, String nouveauMotDePasse) {
-        log.info("📧 Envoi nouveau mot de passe à: {}", email);
+        log.info(" Envoi nouveau mot de passe à: {}", email);
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
             message.setFrom("noreply@platformevote.com");
-            message.setSubject("🔑 Réinitialisation de votre mot de passe");
+            message.setSubject("Réinitialisation de votre mot de passe");
             message.setText(construireMessageReset(username, nouveauMotDePasse));
 
             mailSender.send(message);
-            log.info("✅ Email nouveau mot de passe envoyé à: {}", email);
+            log.info("Email nouveau mot de passe envoyé à: {}", email);
 
         } catch (Exception e) {
-            log.error("💥 Erreur envoi nouveau mot de passe à {}: {}", email, e.getMessage(), e);
+            log.error("Erreur envoi nouveau mot de passe à {}: {}", email, e.getMessage(), e);
             throw new RuntimeException("Erreur lors de l'envoi du nouveau mot de passe à: " + email, e);
         }
     }
 
     /**
-     * 📧 Test rapide d'envoi d'email (pour debug)
+     * Test rapide d'envoi d'email (pour debug)
      */
     public void testerEmail(String emailDestination) {
-        log.info("🧪 Test envoi email à: {}", emailDestination);
+        log.info(" Test envoi email à: {}", emailDestination);
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(emailDestination);
             message.setFrom("noreply@platformevote.com");
-            message.setSubject("🧪 Test Email - Plateforme Vote");
+            message.setSubject(" Test Email - Plateforme Vote");
             message.setText("Ceci est un email de test.\n\nSi vous recevez ce message, la configuration email fonctionne !");
 
             mailSender.send(message);
-            log.info("✅ Email de test envoyé avec succès à: {}", emailDestination);
+            log.info("Email de test envoyé avec succès à: {}", emailDestination);
 
         } catch (Exception e) {
-            log.error("💥 Erreur test email à {}: {}", emailDestination, e.getMessage(), e);
+            log.error(" Erreur test email à {}: {}", emailDestination, e.getMessage(), e);
             throw new RuntimeException("Erreur lors du test email à: " + emailDestination, e);
         }
     }

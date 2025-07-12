@@ -25,13 +25,13 @@ public class AuthController {
     // ==================== CONNEXION ====================
 
     /**
-     * 🔐 Connexion électeur
+     *  Connexion électeur
      */
     @PostMapping("/electeur/login")
     @Operation(summary = "Connexion électeur",
             description = "Authentification d'un électeur avec email et mot de passe")
     public ResponseEntity<AuthResponse> loginElecteur(@Valid @RequestBody LoginRequest request) {
-        log.info("🔐 Tentative connexion électeur - Email: {}", request.getEmail());
+        log.info(" Tentative connexion électeur - Email: {}", request.getEmail());
 
         try {
             AuthResponse response = authService.authentifierElecteur(request);
@@ -43,11 +43,11 @@ public class AuthController {
                                 .build());
             }
 
-            log.info("✅ Connexion électeur réussie - ID: {}", response.getUserId());
+            log.info(" Connexion électeur réussie - ID: {}", response.getUserId());
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Échec connexion électeur: {}", e.getMessage());
+            log.warn(" Échec connexion électeur: {}", e.getMessage());
             return ResponseEntity.badRequest()
                     .body(AuthResponse.builder()
                             .token(null)
@@ -56,21 +56,21 @@ public class AuthController {
     }
 
     /**
-     * 🔐 Connexion administrateur
+     *  Connexion administrateur
      */
     @PostMapping("/admin/login")
     @Operation(summary = "Connexion administrateur",
             description = "Authentification d'un administrateur")
     public ResponseEntity<AuthResponse> loginAdministrateur(@Valid @RequestBody LoginRequest request) {
-        log.info("🔐 Tentative connexion admin - Email: {}", request.getEmail());
+        log.info(" Tentative connexion admin - Email: {}", request.getEmail());
 
         try {
             AuthResponse response = authService.authentifierAdministrateur(request);
-            log.info("✅ Connexion admin réussie - ID: {}", response.getUserId());
+            log.info(" Connexion admin réussie - ID: {}", response.getUserId());
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Échec connexion admin: {}", e.getMessage());
+            log.warn(" Échec connexion admin: {}", e.getMessage());
             return ResponseEntity.badRequest()
                     .body(AuthResponse.builder()
                             .token(null)
@@ -81,7 +81,7 @@ public class AuthController {
     // ==================== CHANGEMENT MOT DE PASSE ====================
 
     /**
-     * 🔑 Changer mot de passe électeur (première connexion)
+     *  Changer mot de passe électeur (première connexion)
      */
     @PostMapping("/electeur/change-password")
     @Operation(summary = "Changer mot de passe électeur",
@@ -90,7 +90,7 @@ public class AuthController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody ChangePasswordRequest request) {
 
-        log.info("🔑 Changement mot de passe électeur");
+        log.info(" Changement mot de passe électeur");
 
         try {
             // Extraire le token (enlever "Bearer " si présent)
@@ -102,11 +102,11 @@ public class AuthController {
                     request.getNouveauMotDePasse()
             );
 
-            log.info("✅ Mot de passe électeur changé avec succès");
+            log.info(" Mot de passe électeur changé avec succès");
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Échec changement mot de passe: {}", e.getMessage());
+            log.warn(" Échec changement mot de passe: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -133,7 +133,7 @@ public class AuthController {
     }
 
     /**
-     * ✅ Vérifier token admin
+     *  Vérifier token admin
      */
     @GetMapping("/admin/verify")
     @Operation(summary = "Vérifier token admin",
@@ -154,7 +154,7 @@ public class AuthController {
     // ==================== INFORMATION SESSION ====================
 
     /**
-     * 👤 Obtenir informations session électeur
+     *  Obtenir informations session électeur
      */
     @GetMapping("/electeur/session")
     @Operation(summary = "Info session électeur",
@@ -183,13 +183,13 @@ public class AuthController {
             return ResponseEntity.ok(sessionInfo);
 
         } catch (Exception e) {
-            log.warn("❌ Erreur récupération session électeur: {}", e.getMessage());
+            log.warn(" Erreur récupération session électeur: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     /**
-     * 👤 Obtenir informations session admin
+     * Obtenir informations session admin
      */
     @GetMapping("/admin/session")
     @Operation(summary = "Info session admin",

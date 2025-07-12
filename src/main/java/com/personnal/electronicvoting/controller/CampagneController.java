@@ -212,7 +212,7 @@ public class CampagneController {
     // ==================== FILTRES AVANCÉS ====================
 
     /**
-     * 🔍 Campagnes par longueur de description
+     *  Campagnes par longueur de description
      */
     @GetMapping("/filtre/par-longueur")
     @Operation(summary = "Filtrer par longueur",
@@ -221,7 +221,7 @@ public class CampagneController {
             @RequestParam(defaultValue = "0") int minLongueur,
             @RequestParam(defaultValue = "10000") int maxLongueur) {
 
-        log.info("🔍 Filtrage campagnes par longueur: {} - {}", minLongueur, maxLongueur);
+        log.info(" Filtrage campagnes par longueur: {} - {}", minLongueur, maxLongueur);
 
         try {
             List<CampagneDTO> toutesCampagnes = campagneService.listerToutesCampagnes();
@@ -233,11 +233,11 @@ public class CampagneController {
                     })
                     .toList();
 
-            log.info("📊 {} campagnes correspondent au filtre", campagnesFiltrees.size());
+            log.info(" {} campagnes correspondent au filtre", campagnesFiltrees.size());
             return ResponseEntity.ok(campagnesFiltrees);
 
         } catch (Exception e) {
-            log.error("💥 Erreur filtrage longueur: {}", e.getMessage(), e);
+            log.error(" Erreur filtrage longueur: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -245,7 +245,7 @@ public class CampagneController {
     // ==================== CONSULTATION PAR CANDIDAT ====================
 
     /**
-     * 📢 Campagnes d'un candidat spécifique
+     *  Campagnes d'un candidat spécifique
      */
     @GetMapping("/candidat/{candidatId}")
     @Operation(summary = "Campagnes d'un candidat",
@@ -253,18 +253,18 @@ public class CampagneController {
     public ResponseEntity<List<CampagneDTO>> obtenirCampagnesCandidat(
             @PathVariable String candidatId) {
 
-        log.info("📢 Consultation campagnes candidat: {}", candidatId);
+        log.info(" Consultation campagnes candidat: {}", candidatId);
 
         try {
             List<CampagneDTO> campagnes = campagneService.obtenirCampagnesParCandidat(candidatId);
-            log.info("📊 {} campagnes trouvées pour candidat {}", campagnes.size(), candidatId);
+            log.info(" {} campagnes trouvées pour candidat {}", campagnes.size(), candidatId);
             return ResponseEntity.ok(campagnes);
 
         } catch (RuntimeException e) {
-            log.warn("❌ Candidat non trouvé: {}", candidatId);
+            log.warn(" Candidat non trouvé: {}", candidatId);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("💥 Erreur campagnes candidat: {}", e.getMessage(), e);
+            log.error(" Erreur campagnes candidat: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -272,7 +272,7 @@ public class CampagneController {
     // ==================== TRENDING ET DÉCOUVERTE ====================
 
     /**
-     * 🔥 Campagnes tendance (les plus récentes)
+     * Campagnes tendance (les plus récentes)
      */
     @GetMapping("/tendance")
     @Operation(summary = "Campagnes tendance",
@@ -280,7 +280,7 @@ public class CampagneController {
     public ResponseEntity<List<CampagneService.CampagneAvecCandidatDTO>> obtenirCampagnesTendance(
             @RequestParam(defaultValue = "5") int limite) {
 
-        log.info("🔥 Consultation campagnes tendance (limite: {})", limite);
+        log.info(" Consultation campagnes tendance (limite: {})", limite);
 
         try {
             List<CampagneService.CampagneAvecCandidatDTO> toutesCampagnes =
@@ -292,24 +292,24 @@ public class CampagneController {
                             .limit(limite)
                             .toList();
 
-            log.info("📊 {} campagnes tendance retournées", campagnesTendance.size());
+            log.info(" {} campagnes tendance retournées", campagnesTendance.size());
             return ResponseEntity.ok(campagnesTendance);
 
         } catch (Exception e) {
-            log.error("💥 Erreur campagnes tendance: {}", e.getMessage(), e);
+            log.error(" Erreur campagnes tendance: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     /**
-     * 🎲 Campagne aléatoire
+     *  Campagne aléatoire
      */
     @GetMapping("/aleatoire")
     @Operation(summary = "Campagne aléatoire",
             description = "Obtenir une campagne choisie aléatoirement")
     public ResponseEntity<CampagneService.CampagneAvecCandidatDTO> obtenirCampagneAleatoire() {
 
-        log.info("🎲 Sélection campagne aléatoire");
+        log.info(" Sélection campagne aléatoire");
 
         try {
             List<CampagneService.CampagneAvecCandidatDTO> toutesCampagnes =
@@ -323,13 +323,13 @@ public class CampagneController {
             CampagneService.CampagneAvecCandidatDTO campagneAleatoire =
                     toutesCampagnes.get(indexAleatoire);
 
-            log.info("🎲 Campagne aléatoire sélectionnée: {}",
+            log.info(" Campagne aléatoire sélectionnée: {}",
                     campagneAleatoire.getCampagne().getExternalIdCampagne());
 
             return ResponseEntity.ok(campagneAleatoire);
 
         } catch (Exception e) {
-            log.error("💥 Erreur campagne aléatoire: {}", e.getMessage(), e);
+            log.error(" Erreur campagne aléatoire: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -337,14 +337,14 @@ public class CampagneController {
     // ==================== EXPORTS ET FORMATS ====================
 
     /**
-     * 📄 Export campagnes en format simplifié
+     *  Export campagnes en format simplifié
      */
     @GetMapping("/export/simple")
     @Operation(summary = "Export simple",
             description = "Exporter les campagnes en format texte simple")
     public ResponseEntity<String> exporterCampagnesSimple() {
 
-        log.info("📄 Export campagnes format simple");
+        log.info(" Export campagnes format simple");
 
         try {
             List<CampagneService.CampagneAvecCandidatDTO> campagnes =
@@ -367,7 +367,7 @@ public class CampagneController {
                     .body(export.toString());
 
         } catch (Exception e) {
-            log.error("💥 Erreur export: {}", e.getMessage(), e);
+            log.error(" Erreur export: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -375,14 +375,14 @@ public class CampagneController {
     // ==================== HEALTH CHECK ====================
 
     /**
-     * 🏥 Health check du service campagnes
+     *  Health check du service campagnes
      */
     @GetMapping("/health")
     @Operation(summary = "Health check",
             description = "Vérifier la santé du service campagnes")
     public ResponseEntity<HealthCheckDTO> healthCheck() {
 
-        log.info("🏥 Health check service campagnes");
+        log.info(" Health check service campagnes");
 
         try {
             CampagneService.StatistiquesCampagnesDTO stats = campagneService.obtenirStatistiquesCampagnes();
@@ -398,7 +398,7 @@ public class CampagneController {
             return ResponseEntity.ok(health);
 
         } catch (Exception e) {
-            log.error("💥 Health check échoué: {}", e.getMessage());
+            log.error(" Health check échoué: {}", e.getMessage());
 
             HealthCheckDTO health = HealthCheckDTO.builder()
                     .status("DOWN")
@@ -415,7 +415,7 @@ public class CampagneController {
     // ==================== DTO HEALTH CHECK ====================
 
     /**
-     * 🏥 DTO pour health check
+     *  DTO pour health check
      */
     @lombok.Data
     @lombok.Builder

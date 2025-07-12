@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 🌐 Configuration CORS pour permettre les appels depuis les clients web
+ * Configuration CORS pour permettre les appels depuis les clients web
  */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {

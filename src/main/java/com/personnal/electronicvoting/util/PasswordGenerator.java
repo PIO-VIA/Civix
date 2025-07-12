@@ -15,23 +15,20 @@ public class PasswordGenerator {
     private static final SecureRandom random = new SecureRandom();
 
     /**
-     * 🎲 Génère un mot de passe temporaire sécurisé
+     *  Génère un mot de passe temporaire sécurisé
      */
     public String genererMotDePasseTemporaire() {
         StringBuilder password = new StringBuilder(12);
 
-        // S'assurer qu'on a au moins un caractère de chaque type
         password.append(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
         password.append(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
         password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
         password.append(SPECIAL.charAt(random.nextInt(SPECIAL.length())));
 
-        // Compléter avec des caractères aléatoires
         for (int i = 4; i < 12; i++) {
             password.append(ALL_CHARS.charAt(random.nextInt(ALL_CHARS.length())));
         }
 
-        // Mélanger les caractères
         return melangerString(password.toString());
     }
 
