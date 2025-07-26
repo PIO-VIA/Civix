@@ -17,4 +17,6 @@ public interface CandidatRepository extends JpaRepository<Candidat, Long> {
 
     @Query("SELECT c FROM Candidat c LEFT JOIN c.votes v GROUP BY c ORDER BY COUNT(v) DESC")
     List<Candidat> findAllOrderByVoteCountDesc();
+    
+    List<Candidat> findByExternalIdCandidatIn(Set<String> externalIds);
 }
