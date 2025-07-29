@@ -22,6 +22,12 @@ public class Candidat {
     @NotBlank
     private String username;
 
+    @Column(length = 5000)
+    private String description;
+
+    @Column(name = "photo_path")
+    private String photo;
+
     @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes = new ArrayList<>();
 

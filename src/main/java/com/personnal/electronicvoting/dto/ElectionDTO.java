@@ -16,6 +16,7 @@ public class ElectionDTO {
     private String externalIdElection;
     private String titre;
     private String description;
+    private String photo;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateDebut;

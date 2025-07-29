@@ -20,6 +20,8 @@ public class CreateElectionRequest {
     @Size(max = 5000, message = "La description ne peut pas dépasser 5000 caractères")
     private String description;
 
+    private String photo;
+
     @NotNull(message = "La date de début est obligatoire")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateDebut;

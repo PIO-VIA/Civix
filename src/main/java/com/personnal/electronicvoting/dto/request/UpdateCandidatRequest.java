@@ -9,4 +9,6 @@ import lombok.*;
 public class UpdateCandidatRequest {
 
     private String username;  // Optionnel
+    private String description;  // Optionnel
+    private String photo;  // Optionnel
 }

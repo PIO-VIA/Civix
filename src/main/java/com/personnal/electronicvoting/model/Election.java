@@ -36,6 +36,9 @@ public class Election {
     @Column(name = "description", length = 5000)
     private String description;
 
+    @Column(name = "photo_path")
+    private String photo;
+
     @NotNull(message = "La date de début est obligatoire")
     @Column(name = "date_debut", nullable = false)
     private LocalDateTime dateDebut;

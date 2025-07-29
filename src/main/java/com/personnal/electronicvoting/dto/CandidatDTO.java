@@ -12,6 +12,8 @@ public class CandidatDTO {
     private String externalIdCandidat;
     private String username;
     private String email;
+    private String description;
+    private String photo;
     private byte[] empreinteDigitale;
     private List<Vote> votes;
     private List<Campagne> campagnes = new ArrayList<>();

@@ -20,6 +20,8 @@ public class UpdateElectionRequest {
     @Size(max = 5000, message = "La description ne peut pas dépasser 5000 caractères")
     private String description;
 
+    private String photo;
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateDebut;
 
