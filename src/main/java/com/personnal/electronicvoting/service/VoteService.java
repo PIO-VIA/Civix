@@ -166,17 +166,17 @@ public class VoteService {
             return resultats;
 
         } catch (Exception e) {
-            log.error("💥 Erreur calcul résultats: {}", e.getMessage(), e);
+            log.error(" Erreur calcul résultats: {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors du calcul des résultats", e);
         }
     }
 
     /**
-     * 🏆 Obtenir le candidat gagnant
+     *  Obtenir le candidat gagnant
      */
     @Transactional(readOnly = true)
     public ResultatVoteDTO obtenirGagnant() {
-        log.info("🏆 Recherche du candidat gagnant");
+        log.info(" Recherche du candidat gagnant");
 
         List<ResultatVoteDTO> resultats = obtenirResultatsVotes();
 
@@ -185,7 +185,7 @@ public class VoteService {
         }
 
         ResultatVoteDTO gagnant = resultats.get(0);
-        log.info("🏆 Gagnant: {} avec {} votes ({}%)",
+        log.info(" Gagnant: {} avec {} votes ({}%)",
                 gagnant.getCandidat().getUsername(),
                 gagnant.getNombreVotes(),
                 gagnant.getPourcentageVotes());
@@ -298,7 +298,7 @@ public class VoteService {
     }
 
     /**
-     * 📊 DTO pour analyse temporelle
+     *  DTO pour analyse temporelle
      */
     @lombok.Data
     @lombok.Builder
