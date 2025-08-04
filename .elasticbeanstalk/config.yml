@@ -1,6 +1,10 @@
 branch-defaults:
   main:
     environment: civix-env
+environment-defaults:
+  civix-env:
+    branch: null
+    repository: null
 global:
   application_name: civix
   branch: null
