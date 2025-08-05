@@ -1,0 +1,97 @@
+name: CI/CD Pipeline with Force Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+
+    - name: Build and analyze with SonarCloud
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ variables.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ variables.SONAR_TOKEN }}
+      run: |
+        mvn clean verify sonar:sonar \
+          -Dsonar.projectKey=${{ variables.SONAR_PROJECT_KEY }} \
+          -Dsonar.organization=${{ variables.SONAR_ORGANIZATION }} \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ variables.SONAR_TOKEN }}
+
+    - name: Check SonarCloud Quality Gate (non-blocking)
+      continue-on-error: true
+      uses: sonarqube-quality-gate-action@master
+      timeout-minutes: 5
+      env:
+        SONAR_TOKEN: ${{ variables.SONAR_TOKEN }}
+
+    - name: Build JAR (force build even if tests fail)
+      run: mvn clean package -DskipTests
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: jar-artifact
+        path: target/*.jar
+
+  deploy:
+    needs: test-and-quality
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: jar-artifact
+        path: target/
+
+    - name: Deploy to Render (force deploy)
+      env:
+        RENDER_API_KEY: ${{ variables.RENDER_API_KEY }}
+        RENDER_SERVICE_ID: ${{ variabless.RENDER_SERVICE_ID }}
+      run: |
+        echo "Deploying to Render regardless of quality gate result..."
+        curl -X POST "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys" \
+          -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json" \
+          -d '{}'
+
+    - name: Notify deployment completion
+      run: |
+        echo " Deployment to Render completed!"
+        echo " Note: This deployment was made regardless of code quality results."
