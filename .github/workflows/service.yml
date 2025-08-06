@@ -51,7 +51,7 @@ jobs:
 
     - name: Check SonarCloud Quality Gate (non-blocking)
       continue-on-error: true
-      uses: sonarqube-quality-gate-action@master
+      uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
       timeout-minutes: 5
       env:
         SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
