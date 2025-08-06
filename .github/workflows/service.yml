@@ -16,10 +16,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
 
     - name: Cache Maven packages
@@ -51,7 +51,7 @@ jobs:
 
     - name: Check SonarCloud Quality Gate (non-blocking)
       continue-on-error: true
-      uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+      uses: sonarqube-quality-gate-action@master
       timeout-minutes: 5
       env:
         SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
       run: mvn clean package -DskipTests
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: jar-artifact
         path: target/*.jar
@@ -75,7 +75,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v3
       with:
         name: jar-artifact
         path: target/
