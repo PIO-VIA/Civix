@@ -1,15 +1,12 @@
 package com.personnal.electronicvoting.dto;
 
-import com.personnal.electronicvoting.model.Candidat;
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CampagneDTO {
-    private String ExternalIdCampagne;
+public class CampagneSummaryDTO {
+    private String externalIdCampagne;
     private String description;
     private String photo;
-    private CandidatSummaryDTO candidat;
-
 }
