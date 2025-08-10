@@ -46,6 +46,7 @@ public class ElectionService {
         Election election = Election.builder()
                 .titre(request.getTitre())
                 .description(request.getDescription())
+                .photo(request.getPhoto())
                 .dateDebut(request.getDateDebut())
                 .dateFin(request.getDateFin())
                 .dateDebutValidite(request.getDateDebutValidite())
@@ -95,6 +96,9 @@ public class ElectionService {
         }
         if (request.getDescription() != null) {
             election.setDescription(request.getDescription());
+        }
+        if (request.getPhoto() != null) {
+            election.setPhoto(request.getPhoto());
         }
         if (request.getDateDebut() != null) {
             election.setDateDebut(request.getDateDebut());

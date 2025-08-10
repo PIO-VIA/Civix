@@ -199,6 +199,8 @@ public class AdministrateurService {
 
             Candidat candidat = new Candidat();
             candidat.setUsername(request.getUsername());
+            candidat.setDescription(request.getDescription());
+            candidat.setPhoto(request.getPhoto());
 
             Candidat candidatSauve = candidatRepository.save(candidat);
             log.info(" Candidat créé avec succès - ID: {}", candidatSauve.getExternalIdCandidat());
@@ -242,6 +244,14 @@ public class AdministrateurService {
                     throw new RuntimeException("Ce nom de candidat est déjà utilisé");
                 }
                 candidat.setUsername(request.getUsername().trim());
+            }
+
+            if (request.getDescription() != null) {
+                candidat.setDescription(request.getDescription().trim());
+            }
+
+            if (request.getPhoto() != null) {
+                candidat.setPhoto(request.getPhoto().trim());
             }
 
             Candidat candidatMisAJour = candidatRepository.save(candidat);

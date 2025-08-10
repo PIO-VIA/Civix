@@ -79,7 +79,7 @@ Note : Pour Gmail, utiliser un mot de passe d'application généré dans les par
 
 1. Cloner le repository :
 ```bash
-git clone <repository-url>
+git clone https://github.com/PIO-VIA/Civix.git
 cd electronicvoting
 ```
 
