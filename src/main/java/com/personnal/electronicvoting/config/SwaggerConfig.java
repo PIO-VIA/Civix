@@ -58,17 +58,17 @@ public class SwaggerConfig {
                         .contact(new Contact()
                                 .name("Équipe Technique")
                                 .email("piodjiele@gmail.com")
-                                .url("https://github.com/votre-repo/electronic-voting"))
+                                .url("https://github.com/PIO-VIA/Civix.git"))
                         .license(new License()
                                 .name("MIT License")
                                 .url("https://opensource.org/licenses/MIT")))
                 .servers(List.of(
                         new Server()
                                 .url("http://localhost:8080")
-                                .description("🔧 Serveur de Développement"),
+                                .description(" Serveur de Développement"),
                         new Server()
-                                .url("https://vote.example.com")
-                                .description("🚀 Serveur de Production")))
+                                .url("https://civix-production.up.railway.app")
+                                .description(" Serveur de Production")))
                 .addSecurityItem(new SecurityRequirement()
                         .addList("bearerAuth"))
                 .components(new Components()
