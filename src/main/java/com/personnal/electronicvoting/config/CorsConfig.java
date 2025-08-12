@@ -27,35 +27,5 @@ public class CorsConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        // Origines autorisées (à adapter selon l'environnement)
-        configuration.setAllowedOriginPatterns(List.of("*"));
-
-        // Méthodes HTTP autorisées
-        configuration.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"
-        ));
-
-        // Headers autorisés
-        configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization", "Content-Type", "X-Requested-With", "Accept",
-                "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"
-        ));
-
-        // Headers exposés au client
-        configuration.setExposedHeaders(Arrays.asList(
-                "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"
-        ));
-
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-    }
+    
 }
