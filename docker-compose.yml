@@ -2,37 +2,37 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:14.18
-    container_name: electronicvoting-db
+    image: postgres:${POSTGRES_VERSION}
+    container_name: ${POSTGRES_CONTAINER_NAME}
     environment:
-      POSTGRES_DB: vote
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: vianney.237
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - voting-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   app:
     build: .
-    container_name: electronicvoting-app
+    container_name: ${APP_CONTAINER_NAME}
     ports:
-      - "8080:8080"
+      - "${APP_PORT}:8080"
     environment:
-      DATABASE_URL: jdbc:postgresql://postgres:5432/vote
-      DATABASE_USERNAME: postgres
-      DATABASE_PASSWORD: vianney.237
-      JWT_SECRET: your-secret-key-here
-      EMAIL_USERNAME: fitj202@gmail.com
-      EMAIL_PASSWORD: lmrh mqqq pjej tcbe
-      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://${POSTGRES_CONTAINER_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_USERNAME: ${EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     depends_on:
       postgres:
         condition: service_healthy

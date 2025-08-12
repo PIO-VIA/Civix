@@ -24,11 +24,11 @@ public class EmailService {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
             message.setFrom("noreply@platformevote.com"); // ← Votre email
-            message.setSubject("🗳️ Vos identifiants pour l'élection");
+            message.setSubject(" Vos identifiants pour l'élection");
             message.setText(construireMessageIdentifiants(username, email, motDePasseTemporaire));
 
             mailSender.send(message);
-            log.info("✅ Email identifiants envoyé avec succès à: {}", email);
+            log.info(" Email identifiants envoyé avec succès à: {}", email);
 
         } catch (Exception e) {
             log.error(" Erreur envoi email identifiants à {}: {}", email, e.getMessage(), e);
