@@ -1,3 +1,6 @@
+// CORRECTION : ElectionController.java
+// Modifier les méthodes pour être cohérentes avec les autres contrôleurs
+
 package com.personnal.electronicvoting.controller;
 
 import com.personnal.electronicvoting.dto.ElectionDTO;
@@ -6,13 +9,14 @@ import com.personnal.electronicvoting.dto.request.CreateElectionRequest;
 import com.personnal.electronicvoting.dto.request.UpdateElectionRequest;
 import com.personnal.electronicvoting.dto.request.VoterElectionRequest;
 import com.personnal.electronicvoting.service.ElectionService;
+import com.personnal.electronicvoting.service.AuthService; // AJOUTER
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+// import org.springframework.security.access.prepost.PreAuthorize; // SUPPRIMER
+// import org.springframework.security.core.Authentication; // SUPPRIMER
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,21 +31,48 @@ import java.util.List;
 public class ElectionController {
 
     private final ElectionService electionService;
+    private final AuthService authService; // AJOUTER
+
+    // ==================== MIDDLEWARE SÉCURITÉ ====================
+
+    /**
+     * Vérifier token admin dans les headers (COHÉRENT avec autres contrôleurs)
+     */
+    private void verifierTokenAdmin(String token) {
+        String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+        if (!authService.verifierTokenAdmin(cleanToken)) {
+            throw new RuntimeException("Token administrateur invalide");
+        }
+    }
+
+    /**
+     * Extraire l'ID admin depuis le token
+     */
+    private String extraireAdminIdDepuisToken(String token) {
+        String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+        return authService.obtenirAdminDepuisToken(cleanToken).getExternalIdAdministrateur();
+    }
 
     // ==================== GESTION ÉLECTIONS ADMINISTRATEUR ====================
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')") // ❌ SUPPRIMER
     @Operation(summary = "Créer une élection",
             description = "Créer une nouvelle élection (accès administrateur uniquement)")
     public ResponseEntity<ElectionDTO> creerElection(
-            @Valid @RequestBody CreateElectionRequest request,
-            Authentication authentication) {
+            @RequestHeader("Authorization") String token, // ✅ AJOUTER
+            @Valid @RequestBody CreateElectionRequest request) { // ✅ SUPPRIMER Authentication
 
-        log.info("🗳️ Création d'une élection par: {}", authentication.getName());
+        log.info("🗳️ Création d'une élection");
 
         try {
-            ElectionDTO election = electionService.creerElection(request, authentication.getName());
+            // ✅ Vérifier token manuellement
+            verifierTokenAdmin(token);
+            String administrateurId = extraireAdminIdDepuisToken(token);
+
+            log.info("🗳️ Création d'une élection par: {}", administrateurId);
+
+            ElectionDTO election = electionService.creerElection(request, administrateurId);
             log.info("✅ Élection créée: {}", election.getExternalIdElection());
             return ResponseEntity.ok(election);
 
@@ -55,18 +86,24 @@ public class ElectionController {
     }
 
     @PutMapping("/{electionId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')") // ❌ SUPPRIMER
     @Operation(summary = "Modifier une élection",
             description = "Modifier une élection existante (accès administrateur uniquement)")
     public ResponseEntity<ElectionDTO> modifierElection(
+            @RequestHeader("Authorization") String token, // ✅ AJOUTER
             @PathVariable String electionId,
-            @Valid @RequestBody UpdateElectionRequest request,
-            Authentication authentication) {
+            @Valid @RequestBody UpdateElectionRequest request) { // ✅ SUPPRIMER Authentication
 
-        log.info("📝 Modification de l'élection {} par: {}", electionId, authentication.getName());
+        log.info("📝 Modification de l'élection {}", electionId);
 
         try {
-            ElectionDTO election = electionService.modifierElection(electionId, request, authentication.getName());
+            // ✅ Vérifier token manuellement
+            verifierTokenAdmin(token);
+            String administrateurId = extraireAdminIdDepuisToken(token);
+
+            log.info("📝 Modification de l'élection {} par: {}", electionId, administrateurId);
+
+            ElectionDTO election = electionService.modifierElection(electionId, request, administrateurId);
             log.info("✅ Élection modifiée: {}", electionId);
             return ResponseEntity.ok(election);
 
@@ -80,17 +117,23 @@ public class ElectionController {
     }
 
     @DeleteMapping("/{electionId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')") // ❌ SUPPRIMER
     @Operation(summary = "Supprimer une élection",
             description = "Supprimer une élection (accès administrateur uniquement)")
     public ResponseEntity<Void> supprimerElection(
-            @PathVariable String electionId,
-            Authentication authentication) {
+            @RequestHeader("Authorization") String token, // ✅ AJOUTER
+            @PathVariable String electionId) { // ✅ SUPPRIMER Authentication
 
-        log.info("🗑️ Suppression de l'élection {} par: {}", electionId, authentication.getName());
+        log.info("🗑️ Suppression de l'élection {}", electionId);
 
         try {
-            electionService.supprimerElection(electionId, authentication.getName());
+            // ✅ Vérifier token manuellement
+            verifierTokenAdmin(token);
+            String administrateurId = extraireAdminIdDepuisToken(token);
+
+            log.info("🗑️ Suppression de l'élection {} par: {}", electionId, administrateurId);
+
+            electionService.supprimerElection(electionId, administrateurId);
             log.info("✅ Élection supprimée: {}", electionId);
             return ResponseEntity.noContent().build();
 
@@ -104,15 +147,22 @@ public class ElectionController {
     }
 
     @GetMapping("/mes-elections")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')") // ❌ SUPPRIMER
     @Operation(summary = "Mes élections",
             description = "Lister les élections créées par l'administrateur connecté")
-    public ResponseEntity<List<ElectionDTO>> listerMesElections(Authentication authentication) {
+    public ResponseEntity<List<ElectionDTO>> listerMesElections(
+            @RequestHeader("Authorization") String token) { // ✅ AJOUTER et SUPPRIMER Authentication
 
-        log.info("📋 Consultation des élections de l'administrateur: {}", authentication.getName());
+        log.info("📋 Consultation des élections de l'administrateur");
 
         try {
-            List<ElectionDTO> elections = electionService.listerElectionsAdministrateur(authentication.getName());
+            // ✅ Vérifier token manuellement
+            verifierTokenAdmin(token);
+            String administrateurId = extraireAdminIdDepuisToken(token);
+
+            log.info("📋 Consultation des élections de l'administrateur: {}", administrateurId);
+
+            List<ElectionDTO> elections = electionService.listerElectionsAdministrateur(administrateurId);
             log.info("📊 {} élections trouvées", elections.size());
             return ResponseEntity.ok(elections);
 
@@ -122,7 +172,7 @@ public class ElectionController {
         }
     }
 
-    // ==================== CONSULTATION PUBLIQUE ====================
+    // ==================== CONSULTATION PUBLIQUE (INCHANGÉ) ====================
 
     @GetMapping
     @Operation(summary = "Lister toutes les élections",
@@ -165,15 +215,25 @@ public class ElectionController {
     // ==================== ÉLECTIONS POUR ÉLECTEURS ====================
 
     @GetMapping("/disponibles")
-    @PreAuthorize("hasRole('ELECTEUR')")
+    // @PreAuthorize("hasRole('ELECTEUR')") // ❌ SUPPRIMER
     @Operation(summary = "Élections disponibles",
             description = "Lister les élections disponibles pour l'électeur connecté")
-    public ResponseEntity<List<ElectionDTO>> listerElectionsDisponibles(Authentication authentication) {
+    public ResponseEntity<List<ElectionDTO>> listerElectionsDisponibles(
+            @RequestHeader("Authorization") String token) { // ✅ AJOUTER et SUPPRIMER Authentication
 
-        log.info("🗳️ Consultation des élections disponibles pour: {}", authentication.getName());
+        log.info("🗳️ Consultation des élections disponibles");
 
         try {
-            List<ElectionDTO> elections = electionService.listerElectionsDisponiblesPourElecteur(authentication.getName());
+            // ✅ Vérifier token électeur
+            String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            if (!authService.verifierTokenElecteur(cleanToken)) {
+                return ResponseEntity.status(401).build();
+            }
+
+            String electeurId = authService.obtenirElecteurDepuisToken(cleanToken).getExternalIdElecteur();
+            log.info("🗳️ Consultation des élections disponibles pour: {}", electeurId);
+
+            List<ElectionDTO> elections = electionService.listerElectionsDisponiblesPourElecteur(electeurId);
             log.info("📊 {} élections disponibles", elections.size());
             return ResponseEntity.ok(elections);
 
@@ -183,26 +243,35 @@ public class ElectionController {
         }
     }
 
-    // ==================== VOTE ====================
+    // ==================== VOTE (SIMPLIFIÉ) ====================
 
     @PostMapping("/{electionId}/voter")
-    @PreAuthorize("hasRole('ELECTEUR')")
+    // @PreAuthorize("hasRole('ELECTEUR')") // ❌ SUPPRIMER
     @Operation(summary = "Voter pour une élection",
             description = "Enregistrer un vote pour une élection")
     public ResponseEntity<VoteElectionDTO> voterPourElection(
+            @RequestHeader("Authorization") String token, // ✅ AJOUTER
             @PathVariable String electionId,
             @Valid @RequestBody VoterElectionRequest request,
-            Authentication authentication,
-            HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest) { // ✅ SUPPRIMER Authentication
 
-        log.info("🗳️ Vote pour l'élection {} par: {}", electionId, authentication.getName());
+        log.info("🗳️ Vote pour l'élection {}", electionId);
 
         try {
+            // ✅ Vérifier token électeur
+            String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            if (!authService.verifierTokenElecteur(cleanToken)) {
+                return ResponseEntity.status(401).build();
+            }
+
+            String electeurId = authService.obtenirElecteurDepuisToken(cleanToken).getExternalIdElecteur();
+            log.info("🗳️ Vote pour l'élection {} par: {}", electionId, electeurId);
+
             request.setElectionId(electionId);
             request.setAdresseIp(getClientIpAddress(httpRequest));
             request.setUserAgent(httpRequest.getHeader("User-Agent"));
 
-            VoteElectionDTO vote = electionService.voterPourElection(request, authentication.getName());
+            VoteElectionDTO vote = electionService.voterPourElection(request, electeurId);
             log.info("✅ Vote enregistré: {}", vote.getId());
             return ResponseEntity.ok(vote);
 
@@ -215,7 +284,7 @@ public class ElectionController {
         }
     }
 
-    // ==================== RÉSULTATS ====================
+    // ==================== RÉSULTATS (INCHANGÉ) ====================
 
     @GetMapping("/{electionId}/resultats")
     @Operation(summary = "Résultats d'une élection",
