@@ -1,12 +1,13 @@
 // CORRECTION : ElectionController.java
 // Modifier les méthodes pour être cohérentes avec les autres contrôleurs
 
+// CORRECTION : ElectionController.java
+// Modifier les méthodes pour être cohérentes avec les autres contrôleurs
+
 package com.personnal.electronicvoting.controller;
 
 import com.personnal.electronicvoting.dto.ElectionDTO;
 import com.personnal.electronicvoting.dto.VoteElectionDTO;
-import com.personnal.electronicvoting.dto.request.CreateElectionRequest;
-import com.personnal.electronicvoting.dto.request.UpdateElectionRequest;
 import com.personnal.electronicvoting.dto.request.VoterElectionRequest;
 import com.personnal.electronicvoting.service.ElectionService;
 import com.personnal.electronicvoting.service.AuthService;
@@ -29,144 +30,9 @@ import java.util.List;
 public class ElectionController {
 
     private final ElectionService electionService;
-    private final AuthService authService; // AJOUTER
+    private final AuthService authService;
 
-    // ==================== MIDDLEWARE SÉCURITÉ ====================
-
-    /**
-     * Vérifier token admin dans les headers (COHÉRENT avec autres contrôleurs)
-     */
-    private void verifierTokenAdmin(String token) {
-        String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-        if (!authService.verifierTokenAdmin(cleanToken)) {
-            throw new RuntimeException("Token administrateur invalide");
-        }
-    }
-
-    /**
-     * Extraire l'ID admin depuis le token
-     */
-    private String extraireAdminIdDepuisToken(String token) {
-        String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-        return authService.obtenirAdminDepuisToken(cleanToken).getExternalIdAdministrateur();
-    }
-
-    // ==================== GESTION ÉLECTIONS ADMINISTRATEUR ====================
-
-    @PostMapping
-    @Operation(summary = "Créer une élection",
-            description = "Créer une nouvelle élection (accès administrateur uniquement)")
-    public ResponseEntity<ElectionDTO> creerElection(
-            @RequestHeader("Authorization") String token,
-            @Valid @RequestBody CreateElectionRequest request) {
-
-        log.info("🗳️ Création d'une élection");
-
-        try {
-            // ✅ Vérifier token manuellement
-            verifierTokenAdmin(token);
-            String administrateurId = extraireAdminIdDepuisToken(token);
-
-            log.info("🗳️ Création d'une élection par: {}", administrateurId);
-
-            ElectionDTO election = electionService.creerElection(request, administrateurId);
-            log.info("✅ Élection créée: {}", election.getExternalIdElection());
-            return ResponseEntity.ok(election);
-
-        } catch (RuntimeException e) {
-            log.error("❌ Erreur création élection: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error("💥 Erreur interne création élection: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PutMapping("/{electionId}")
-    @Operation(summary = "Modifier une élection",
-            description = "Modifier une élection existante (accès administrateur uniquement)")
-    public ResponseEntity<ElectionDTO> modifierElection(
-            @RequestHeader("Authorization") String token,
-            @PathVariable String electionId,
-            @Valid @RequestBody UpdateElectionRequest request) {
-
-        log.info("📝 Modification de l'élection {}", electionId);
-
-        try {
-            // ✅ Vérifier token manuellement
-            verifierTokenAdmin(token);
-            String administrateurId = extraireAdminIdDepuisToken(token);
-
-            log.info("📝 Modification de l'élection {} par: {}", electionId, administrateurId);
-
-            ElectionDTO election = electionService.modifierElection(electionId, request, administrateurId);
-            log.info("✅ Élection modifiée: {}", electionId);
-            return ResponseEntity.ok(election);
-
-        } catch (RuntimeException e) {
-            log.error("❌ Erreur modification élection: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error("💥 Erreur interne modification élection: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @DeleteMapping("/{electionId}")
-    @Operation(summary = "Supprimer une élection",
-            description = "Supprimer une élection (accès administrateur uniquement)")
-    public ResponseEntity<Void> supprimerElection(
-            @RequestHeader("Authorization") String token,
-            @PathVariable String electionId) {
-
-        log.info("🗑️ Suppression de l'élection {}", electionId);
-
-        try {
-            // ✅ Vérifier token manuellement
-            verifierTokenAdmin(token);
-            String administrateurId = extraireAdminIdDepuisToken(token);
-
-            log.info("🗑️ Suppression de l'élection {} par: {}", electionId, administrateurId);
-
-            electionService.supprimerElection(electionId, administrateurId);
-            log.info("✅ Élection supprimée: {}", electionId);
-            return ResponseEntity.noContent().build();
-
-        } catch (RuntimeException e) {
-            log.error("❌ Erreur suppression élection: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error("💥 Erreur interne suppression élection: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/mes-elections")
-    @Operation(summary = "Mes élections",
-            description = "Lister les élections créées par l'administrateur connecté")
-    public ResponseEntity<List<ElectionDTO>> listerMesElections(
-            @RequestHeader("Authorization") String token) {
-
-        log.info("📋 Consultation des élections de l'administrateur");
-
-        try {
-            // ✅ Vérifier token manuellement
-            verifierTokenAdmin(token);
-            String administrateurId = extraireAdminIdDepuisToken(token);
-
-            log.info("📋 Consultation des élections de l'administrateur: {}", administrateurId);
-
-            List<ElectionDTO> elections = electionService.listerElectionsAdministrateur(administrateurId);
-            log.info("📊 {} élections trouvées", elections.size());
-            return ResponseEntity.ok(elections);
-
-        } catch (Exception e) {
-            log.error("💥 Erreur consultation élections administrateur: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    // ==================== CONSULTATION PUBLIQUE (INCHANGÉ) ====================
+    // ==================== CONSULTATION PUBLIQUE ====================
 
     @GetMapping
     @Operation(summary = "Lister toutes les élections",
@@ -276,7 +142,7 @@ public class ElectionController {
         }
     }
 
-    // ==================== RÉSULTATS (INCHANGÉ) ====================
+    // ==================== RÉSULTATS ====================
 
     @GetMapping("/{electionId}/resultats")
     @Operation(summary = "Résultats d'une élection",

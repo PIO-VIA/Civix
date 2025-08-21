@@ -4,6 +4,7 @@ import com.personnal.electronicvoting.dto.*;
 import com.personnal.electronicvoting.dto.request.*;
 import com.personnal.electronicvoting.service.AdministrateurService;
 import com.personnal.electronicvoting.service.AuthService;
+import com.personnal.electronicvoting.service.ElectionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class AdministrateurController {
 
     private final AdministrateurService administrateurService;
     private final AuthService authService;
+    private final ElectionService electionService;
 
     // ==================== MIDDLEWARE SÉCURITÉ ====================
 
@@ -356,6 +358,132 @@ public class AdministrateurController {
 
         } catch (RuntimeException e) {
             log.warn(" Erreur suppression campagne: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // ==================== GESTION ÉLECTIONS ====================
+
+    /**
+     *  Créer une élection
+     */
+    @PostMapping("/elections")
+    @Operation(summary = "Créer une élection",
+            description = "Créer une nouvelle élection")
+    public ResponseEntity<ElectionDTO> creerElection(
+            @RequestHeader("Authorization") String token,
+            @Valid @RequestBody CreateElectionRequest request) {
+
+        log.info("🗳️ Admin - Création d'une élection");
+
+        try {
+            verifierTokenAdmin(token);
+            String administrateurId = authService.obtenirAdminDepuisToken(token.substring(7)).getExternalIdAdministrateur();
+
+            ElectionDTO election = electionService.creerElection(request, administrateurId);
+            log.info("✅ Élection créée: {}", election.getExternalIdElection());
+            return ResponseEntity.status(HttpStatus.CREATED).body(election);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Erreur création élection: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     *  Lister toutes les élections
+     */
+    @GetMapping("/elections")
+    @Operation(summary = "Lister les élections",
+            description = "Obtenir la liste de toutes les élections")
+    public ResponseEntity<List<ElectionDTO>> listerElections(
+            @RequestHeader("Authorization") String token) {
+
+        log.info("📋 Admin - Liste de toutes les élections");
+
+        try {
+            verifierTokenAdmin(token);
+            List<ElectionDTO> elections = electionService.listerToutesElections();
+            return ResponseEntity.ok(elections);
+
+        } catch (RuntimeException e) {
+            log.warn(" Erreur liste élections: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    /**
+     *  Obtenir une élection par ID
+     */
+    @GetMapping("/elections/{electionId}")
+    @Operation(summary = "Détails d'une élection",
+            description = "Obtenir les détails d'une élection spécifique")
+    public ResponseEntity<ElectionDTO> obtenirElection(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String electionId) {
+
+        log.info("🔍 Admin - Consultation de l'élection: {}", electionId);
+
+        try {
+            verifierTokenAdmin(token);
+            ElectionDTO election = electionService.obtenirElection(electionId);
+            return ResponseEntity.ok(election);
+
+        } catch (RuntimeException e) {
+            log.warn("❌ Élection non trouvée: {}", electionId);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     *  Modifier une élection
+     */
+    @PutMapping("/elections/{electionId}")
+    @Operation(summary = "Modifier une élection",
+            description = "Modifier une élection existante")
+    public ResponseEntity<ElectionDTO> modifierElection(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String electionId,
+            @Valid @RequestBody UpdateElectionRequest request) {
+
+        log.info("📝 Admin - Modification de l'élection {}", electionId);
+
+        try {
+            verifierTokenAdmin(token);
+            String administrateurId = authService.obtenirAdminDepuisToken(token.substring(7)).getExternalIdAdministrateur();
+
+            ElectionDTO election = electionService.modifierElection(electionId, request, administrateurId);
+            log.info("✅ Élection modifiée: {}", electionId);
+            return ResponseEntity.ok(election);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Erreur modification élection: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     *  Supprimer une élection
+     */
+    @DeleteMapping("/elections/{electionId}")
+    @Operation(summary = "Supprimer une élection",
+            description = "Supprimer une élection")
+    public ResponseEntity<Void> supprimerElection(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String electionId) {
+
+        log.info("🗑️ Admin - Suppression de l'élection {}", electionId);
+
+        try {
+            verifierTokenAdmin(token);
+            String administrateurId = authService.obtenirAdminDepuisToken(token.substring(7)).getExternalIdAdministrateur();
+
+            electionService.supprimerElection(electionId, administrateurId);
+            log.info("✅ Élection supprimée: {}", electionId);
+            return ResponseEntity.noContent().build();
+
+        } catch (RuntimeException e) {
+            log.error("❌ Erreur suppression élection: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
