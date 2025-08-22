@@ -14,15 +14,13 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ElectionMapper {
 
-    @Mapping(target = "administrateurId", source = "administrateur.externalIdAdministrateur")
-    @Mapping(target = "administrateurNom", source = "administrateur.username")
+
     @Mapping(target = "electeursAutorises", source = "electeursAutorises", qualifiedByName = "extractElecteurIds")
     @Mapping(target = "candidatsParticipants", source = "candidats", qualifiedByName = "extractCandidatIds")
     @Mapping(target = "nombreElecteursInscrits", expression = "java(election.getElecteursAutorises() != null ? (long) election.getElecteursAutorises().size() : 0L)")
     @Mapping(target = "nombreCandidats", expression = "java(election.getCandidats() != null ? (long) election.getCandidats().size() : 0L)")
     @Mapping(target = "nombreVotes", expression = "java(election.getVotes() != null ? (long) election.getVotes().size() : 0L)")
     @Mapping(target = "estActive", expression = "java(election.estActive())")
-    @Mapping(target = "estDansLaPeriodeDeValidite", expression = "java(election.estDansLaPeriodeDeValidite())")
     ElectionDTO toDTO(Election election);
 
     @Mapping(target = "idElection", ignore = true)

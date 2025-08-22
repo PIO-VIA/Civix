@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,16 +18,16 @@ public interface ElectionRepository extends JpaRepository<Election, Long> {
 
     List<Election> findByStatut(StatutElection statut);
 
-    List<Election> findByAdministrateur_ExternalIdAdministrateur(String administrateurId);
+
 
     @Query("SELECT e FROM Election e WHERE e.dateDebut <= :maintenant AND e.dateFin >= :maintenant AND e.statut = :statut")
-    List<Election> findElectionsActives(@Param("maintenant") LocalDateTime maintenant, @Param("statut") StatutElection statut);
+    List<Election> findElectionsActives(@Param("maintenant") LocalDate maintenant, @Param("statut") StatutElection statut);
 
     @Query("SELECT e FROM Election e WHERE e.dateDebut > :maintenant AND e.statut = :statut")
-    List<Election> findElectionsFutures(@Param("maintenant") LocalDateTime maintenant, @Param("statut") StatutElection statut);
+    List<Election> findElectionsFutures(@Param("maintenant") LocalDate maintenant, @Param("statut") StatutElection statut);
 
     @Query("SELECT e FROM Election e WHERE e.dateFin < :maintenant AND e.statut = :statut")
-    List<Election> findElectionsTerminees(@Param("maintenant") LocalDateTime maintenant, @Param("statut") StatutElection statut);
+    List<Election> findElectionsTerminees(@Param("maintenant") LocalDate maintenant, @Param("statut") StatutElection statut);
 
     @Query("SELECT e FROM Election e JOIN e.electeursAutorises ea WHERE ea.externalIdElecteur = :electeurId")
     List<Election> findElectionsPourElecteur(@Param("electeurId") String electeurId);
@@ -44,7 +44,7 @@ public interface ElectionRepository extends JpaRepository<Election, Long> {
     Long countByStatut(@Param("statut") StatutElection statut);
 
     @Query("SELECT e FROM Election e WHERE e.dateCreation BETWEEN :dateDebut AND :dateFin")
-    List<Election> findElectionsCreeesEntre(@Param("dateDebut") LocalDateTime dateDebut, @Param("dateFin") LocalDateTime dateFin);
+    List<Election> findElectionsCreeesEntre(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);
 
     @Query("SELECT DISTINCT e FROM Election e JOIN e.electeursAutorises ea WHERE ea.externalIdElecteur = :electeurId AND e.statut = :statut")
     List<Election> findElectionsDisponiblesPourElecteur(@Param("electeurId") String electeurId, @Param("statut") StatutElection statut);

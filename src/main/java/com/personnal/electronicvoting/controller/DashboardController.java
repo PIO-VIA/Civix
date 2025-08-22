@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -82,7 +82,7 @@ public class DashboardController {
                     .statistiquesGlobales(statsGlobales)
                     .recommendations(recommendations)
                     .messageBienvenue(genererMessageBienvenue(electeur))
-                    .derniereMiseAJour(LocalDateTime.now())
+                    .derniereMiseAJour(LocalDate.now())
                     .build();
 
             return ResponseEntity.ok(dashboard);
@@ -154,7 +154,7 @@ public class DashboardController {
                     .metriquesPerformance(metriques)
                     .actionsRecentes(actionsRecentes)
                     .resumeExecutif(genererResumeExecutif(statsAdmin))
-                    .derniereMiseAJour(LocalDateTime.now())
+                    .derniereMiseAJour(LocalDate.now())
                     .build();
 
             return ResponseEntity.ok(dashboard);
@@ -216,8 +216,8 @@ public class DashboardController {
                     .campagnesEnVedette(campagnesVedette)
                     .progressionParticipation(progression)
                     .messagePublic("Élection en cours - Résultats en temps réel")
-                    .derniereMiseAJour(LocalDateTime.now())
-                    .prochaineMiseAJour(LocalDateTime.now().plusMinutes(5))
+                    .derniereMiseAJour(LocalDate.now())
+                    .prochaineMiseAJour(LocalDate.now())
                     .build();
 
             return ResponseEntity.ok(dashboard);
@@ -268,7 +268,7 @@ public class DashboardController {
                     .statutProgression(statutProgression)
                     .couleurIndicateur(couleur)
                     .messageMotivation(genererMessageMotivation(pourcentageParticipation))
-                    .horodatage(LocalDateTime.now())
+                    .horodatage(LocalDate.now())
                     .build();
 
             return ResponseEntity.ok(widget);
@@ -302,7 +302,7 @@ public class DashboardController {
                     .troisiemePlace(troisieme)
                     .ecartPremierDeuxieme(calculerEcart(premier, deuxieme))
                     .messageCompetition(genererMessageCompetition(premier, deuxieme))
-                    .horodatage(LocalDateTime.now())
+                    .horodatage(LocalDate.now())
                     .build();
 
             return ResponseEntity.ok(widget);
@@ -355,7 +355,7 @@ public class DashboardController {
                     .titre("Participation faible")
                     .message("Le taux de participation est de " + stats.getTauxParticipation() + "%")
                     .niveau("MOYEN")
-                    .horodatage(LocalDateTime.now())
+                    .horodatage(LocalDate.now())
                     .build());
         }
 
@@ -366,7 +366,7 @@ public class DashboardController {
                     .titre("Candidats sans campagne")
                     .message("Certains candidats n'ont pas encore de campagne")
                     .niveau("BAS")
-                    .horodatage(LocalDateTime.now())
+                    .horodatage(LocalDate.now())
                     .build());
         }
 
@@ -380,7 +380,7 @@ public class DashboardController {
                 .requetesParMinute(200)
                 .tauxSucces(99.5)
                 .chargeSysteme("NORMALE")
-                .horodatage(LocalDateTime.now())
+                .horodatage(LocalDate.now())
                 .build();
     }
 
@@ -390,14 +390,14 @@ public class DashboardController {
                         .id("1")
                         .action("Création électeur")
                         .utilisateur("admin")
-                        .horodatage(LocalDateTime.now().minusMinutes(10))
+                        .horodatage(LocalDate.now())
                         .statut("SUCCES")
                         .build(),
                 ActionRecenteDTO.builder()
                         .id("2")
                         .action("Modification campagne")
                         .utilisateur("admin")
-                        .horodatage(LocalDateTime.now().minusMinutes(25))
+                        .horodatage(LocalDate.now())
                         .statut("SUCCES")
                         .build()
         );
@@ -472,7 +472,7 @@ public class DashboardController {
         private VoteService.StatistiquesVoteDTO statistiquesGlobales;
         private List<String> recommendations;
         private String messageBienvenue;
-        private LocalDateTime derniereMiseAJour;
+        private LocalDate derniereMiseAJour;
     }
 
     @lombok.Data
@@ -489,7 +489,7 @@ public class DashboardController {
         private MetriquesPerformanceDTO metriquesPerformance;
         private List<ActionRecenteDTO> actionsRecentes;
         private String resumeExecutif;
-        private LocalDateTime derniereMiseAJour;
+        private LocalDate derniereMiseAJour;
     }
 
     @lombok.Data
@@ -504,8 +504,8 @@ public class DashboardController {
         private List<CampagneService.CampagneAvecCandidatDTO> campagnesEnVedette;
         private ProgressionParticipationDTO progressionParticipation;
         private String messagePublic;
-        private LocalDateTime derniereMiseAJour;
-        private LocalDateTime prochaineMiseAJour;
+        private LocalDate derniereMiseAJour;
+        private LocalDate prochaineMiseAJour;
     }
 
     @lombok.Data
@@ -517,7 +517,7 @@ public class DashboardController {
         private String titre;
         private String message;
         private String niveau;
-        private LocalDateTime horodatage;
+        private LocalDate horodatage;
     }
 
     @lombok.Data
@@ -530,7 +530,7 @@ public class DashboardController {
         private int requetesParMinute;
         private double tauxSucces;
         private String chargeSysteme;
-        private LocalDateTime horodatage;
+        private LocalDate horodatage;
     }
 
     @lombok.Data
@@ -541,7 +541,7 @@ public class DashboardController {
         private String id;
         private String action;
         private String utilisateur;
-        private LocalDateTime horodatage;
+        private LocalDate horodatage;
         private String statut;
     }
 
@@ -568,7 +568,7 @@ public class DashboardController {
         private String statutProgression;
         private String couleurIndicateur;
         private String messageMotivation;
-        private LocalDateTime horodatage;
+        private LocalDate horodatage;
     }
 
     @lombok.Data
@@ -581,6 +581,6 @@ public class DashboardController {
         private VoteService.ResultatVoteDTO troisiemePlace;
         private double ecartPremierDeuxieme;
         private String messageCompetition;
-        private LocalDateTime horodatage;
+        private LocalDate horodatage;
     }
 }

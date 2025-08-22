@@ -64,10 +64,10 @@ public class SwaggerConfig {
                                 .url("https://opensource.org/licenses/MIT")))
                 .servers(List.of(
                         new Server()
-                                .url("http://localhost:8080")
+                                .url("http://localhost:8082")
                                 .description(" Serveur de Développement"),
                         new Server()
-                                .url("https://civix-production.up.railway.app")
+                                .url("https://civix-tqg1.onrender.com")
                                 .description(" Serveur de Production")))
                 .addSecurityItem(new SecurityRequirement()
                         .addList("bearerAuth"))

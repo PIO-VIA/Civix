@@ -3,6 +3,7 @@ package com.personnal.electronicvoting.service;
 import com.personnal.electronicvoting.dto.ElecteurDTO;
 import com.personnal.electronicvoting.dto.CandidatDTO;
 import com.personnal.electronicvoting.dto.CampagneDTO;
+import com.personnal.electronicvoting.dto.ElectionDTO;
 import com.personnal.electronicvoting.dto.request.*;
 import com.personnal.electronicvoting.model.*;
 import com.personnal.electronicvoting.repository.*;
@@ -14,7 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +29,13 @@ public class AdministrateurService {
     private final ElecteurRepository electeurRepository;
     private final CandidatRepository candidatRepository;
     private final CampagneRepository campagneRepository;
-    private final AdministrateurRepository administrateurRepository;
+    private final ElectionRepository electionRepository;
     private final VoteRepository voteRepository;
 
     private final UserMapper userMapper;
     private final CandidatMapper candidatMapper;
     private final CampagneMapper campagneMapper;
-    private final AdminMapper adminMapper;
+    private final ElectionMapper electionMapper;
 
     private final PasswordEncoder passwordEncoder;
     private final PasswordGenerator passwordGenerator;
@@ -390,6 +394,114 @@ public class AdministrateurService {
         }
     }
 
+    // ==================== GESTION ÉLECTIONS ADMINISTRATEUR ====================
+
+    public ElectionDTO creerElection(CreateElectionRequest request) {
+
+        validateCreateElectionRequest(request);
+        Election election = Election.builder()
+                .titre(request.getTitre())
+                .description(request.getDescription())
+                .photo(request.getPhoto())
+                .dateDebut(request.getDateDebut())
+                .dateFin(request.getDateFin())
+                .autoriserVoteMultiple(request.getAutoriserVoteMultiple())
+                .nombreMaxVotesParElecteur(request.getNombreMaxVotesParElecteur())
+                .resultatsVisibles(request.getResultatsVisibles())
+                .statut(Election.StatutElection.PLANIFIEE)
+                .build();
+
+        if (request.getElecteursAutorises() != null && !request.getElecteursAutorises().isEmpty()) {
+            Set<Electeur> electeurs = electeurRepository.findByExternalIdElecteurIn(request.getElecteursAutorises())
+                    .stream()
+                    .collect(Collectors.toSet());
+            election.setElecteursAutorises(electeurs);
+        }
+
+        if (request.getCandidatsParticipants() != null && !request.getCandidatsParticipants().isEmpty()) {
+            Set<Candidat> candidats = candidatRepository.findByExternalIdCandidatIn(request.getCandidatsParticipants())
+                    .stream()
+                    .collect(Collectors.toSet());
+            election.setCandidats(candidats);
+        }
+
+        Election electionSauvegardee = electionRepository.save(election);
+        log.info("✅ Élection créée avec l'ID: {}", electionSauvegardee.getExternalIdElection());
+
+        return electionMapper.toDTO(electionSauvegardee);
+    }
+
+    public ElectionDTO modifierElection(String electionId, UpdateElectionRequest request) {
+        log.info("📝 Modification de l'élection {} ", electionId);
+
+        Election election = electionRepository.findByExternalIdElection(electionId)
+                .orElseThrow(() -> new RuntimeException("Élection non trouvée: " + electionId));
+
+        validateUpdateElectionRequest(request, election);
+
+        if (request.getTitre() != null) {
+            election.setTitre(request.getTitre());
+        }
+        if (request.getDescription() != null) {
+            election.setDescription(request.getDescription());
+        }
+        if (request.getPhoto() != null) {
+            election.setPhoto(request.getPhoto());
+        }
+        if (request.getDateDebut() != null) {
+            election.setDateDebut(request.getDateDebut());
+        }
+        if (request.getDateFin() != null) {
+            election.setDateFin(request.getDateFin());
+        }
+
+        if (request.getStatut() != null) {
+            election.setStatut(request.getStatut());
+        }
+        if (request.getAutoriserVoteMultiple() != null) {
+            election.setAutoriserVoteMultiple(request.getAutoriserVoteMultiple());
+        }
+        if (request.getNombreMaxVotesParElecteur() != null) {
+            election.setNombreMaxVotesParElecteur(request.getNombreMaxVotesParElecteur());
+        }
+        if (request.getResultatsVisibles() != null) {
+            election.setResultatsVisibles(request.getResultatsVisibles());
+        }
+
+        if (request.getElecteursAutorises() != null) {
+            Set<Electeur> electeurs = electeurRepository.findByExternalIdElecteurIn(request.getElecteursAutorises())
+                    .stream()
+                    .collect(Collectors.toSet());
+            election.setElecteursAutorises(electeurs);
+        }
+
+        if (request.getCandidatsParticipants() != null) {
+            Set<Candidat> candidats = candidatRepository.findByExternalIdCandidatIn(request.getCandidatsParticipants())
+                    .stream()
+                    .collect(Collectors.toSet());
+            election.setCandidats(candidats);
+        }
+
+        Election electionModifiee = electionRepository.save(election);
+        log.info("✅ Élection modifiée: {}", electionId);
+
+        return electionMapper.toDTO(electionModifiee);
+    }
+
+
+    public void supprimerElection(String electionId) {
+        log.info("🗑️ Suppression de l'élection {} ", electionId);
+
+        Election election = electionRepository.findByExternalIdElection(electionId)
+                .orElseThrow(() -> new RuntimeException("Élection non trouvée: " + electionId));
+
+        if (election.getStatut() == Election.StatutElection.EN_COURS) {
+            throw new RuntimeException("Impossible de supprimer une élection en cours");
+        }
+
+        electionRepository.delete(election);
+        log.info("✅ Élection supprimée: {}", electionId);
+    }
     // ==================== STATISTIQUES ====================
 
     /**
@@ -416,6 +528,31 @@ public class AdministrateurService {
                 .totalVotes(totalVotes)
                 .tauxParticipation(Math.round(tauxParticipation * 100.0) / 100.0)
                 .build();
+    }
+
+    private void validateCreateElectionRequest(CreateElectionRequest request) {
+        if (request.getDateDebut().isAfter(request.getDateFin())) {
+            throw new RuntimeException("La date de début doit être antérieure à la date de fin");
+        }
+
+
+        if (request.getDateDebut().isBefore(LocalDate.now())) {
+            throw new RuntimeException("La date de début ne peut pas être dans le passé");
+        }
+    }
+
+    private void validateUpdateElectionRequest(UpdateElectionRequest request, Election election) {
+        if (election.getStatut() == Election.StatutElection.EN_COURS) {
+            if (request.getDateDebut() != null || request.getDateFin() != null) {
+                throw new RuntimeException("Impossible de modifier les dates d'une élection en cours");
+            }
+        }
+
+        if (request.getDateDebut() != null && request.getDateFin() != null) {
+            if (request.getDateDebut().isAfter(request.getDateFin())) {
+                throw new RuntimeException("La date de début doit être antérieure à la date de fin");
+            }
+        }
     }
 
     /**

@@ -194,7 +194,7 @@ public class ElectionController {
                     .electionsActives(elections.stream()
                             .filter(ElectionDTO::getEstActive)
                             .count())
-                    .timestamp(java.time.LocalDateTime.now())
+                    .timestamp(java.time.LocalDate.now())
                     .message("Service élections opérationnel")
                     .build();
 
@@ -207,7 +207,7 @@ public class ElectionController {
                     .status("DOWN")
                     .nombreElections(0L)
                     .electionsActives(0L)
-                    .timestamp(java.time.LocalDateTime.now())
+                    .timestamp(java.time.LocalDate.now())
                     .message("Erreur service élections: " + e.getMessage())
                     .build();
 
@@ -225,7 +225,7 @@ public class ElectionController {
         private String status;
         private Long nombreElections;
         private Long electionsActives;
-        private java.time.LocalDateTime timestamp;
+        private java.time.LocalDate timestamp;
         private String message;
     }
 }

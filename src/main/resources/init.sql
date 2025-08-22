@@ -10,59 +10,6 @@
 -- TRUNCATE TABLE electeur CASCADE;
 -- TRUNCATE TABLE administrateur CASCADE;
 
--- ===============================================
--- 1. INSERTION DES ADMINISTRATEURS
--- ===============================================
-
-INSERT INTO administrateur (external_id_administrateur, nom_administrateur, email, mot_de_passe, empreinte_digitale) VALUES
-('admin-001', 'Admin Général', 'admin@elecam.cm', '$2a$15$8Q7Q8Q7Q8Q7Q8Q7Q8Q7Q8eK4vF2mN8pL5rG9sH1tJ6kI2nP7qS3uV', NULL)
-
--- ===============================================
--- 2. INSERTION DES ÉLECTEURS
--- ===============================================
-
-INSERT INTO electeur (external_id_electeur, nom_electeur, email, mot_de_passe, empreinte_digitale, a_vote) VALUES
--- Région du Centre (Yaoundé)
-('electeur-001', 'NKOMO Paul', 'paul.nkomo@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-002', 'MVONDO Marie', 'marie.mvondo@yahoo.fr', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-003', 'FOUDA Jean', 'jean.fouda@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-004', 'ATANGANA Grace', 'grace.atangana@hotmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-005', 'OLINGA Patrick', 'patrick.olinga@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-
--- Région du Littoral (Douala)
-('electeur-006', 'SAWA Emmanuel', 'emmanuel.sawa@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-007', 'MALIMBA Sylvie', 'sylvie.malimba@yahoo.fr', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-008', 'DOUALA François', 'francois.douala@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-009', 'KOTTO Albertine', 'albertine.kotto@hotmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-010', 'BELL Roger', 'roger.bell@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-
--- Région de l'Ouest (Bafoussam)
-('electeur-011', 'KAMGA Viviane', 'viviane.kamga@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-012', 'TCHATCHOU André', 'andre.tchatchou@yahoo.fr', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-013', 'FOZEU Christine', 'christine.fozeu@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-014', 'DSCHANG Martin', 'martin.dschang@hotmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-015', 'MBOUDA Rosette', 'rosette.mbouda@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-
--- Région du Nord-Ouest (Bamenda)
-('electeur-016', 'NGWA Peter', 'peter.ngwa@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-017', 'FOFUNG Mary', 'mary.fofung@yahoo.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-018', 'BAMENDA John', 'john.bamenda@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-019', 'KUMBO Sarah', 'sarah.kumbo@hotmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-020', 'FUNDONG Daniel', 'daniel.fundong@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-
--- Région du Sud-Ouest (Buea)
-('electeur-021', 'MOLYKO Rebecca', 'rebecca.molyko@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-022', 'BUEA Michael', 'michael.buea@yahoo.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-023', 'LIMBE Grace', 'grace.limbe@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-024', 'KUMBA Joseph', 'joseph.kumba@hotmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-025', 'TIKO Elizabeth', 'elizabeth.tiko@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-
--- Région de l'Extrême-Nord (Maroua)
-('electeur-026', 'MAROUA Amadou', 'amadou.maroua@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-027', 'MOKOLO Fatima', 'fatima.mokolo@yahoo.fr', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-028', 'KOUSSERI Ibrahim', 'ibrahim.kousseri@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-029', 'MORA Aisha', 'aisha.mora@hotmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false),
-('electeur-030', 'WAZA Hamadou', 'hamadou.waza@gmail.com', '$2a$15$TempPass123!AbCdEfGhIjKlMnOpQrStUvWxYz', NULL, false);
 
 -- ===============================================
 -- 3. INSERTION DES CANDIDATS
@@ -158,47 +105,17 @@ INSERT INTO campagne (external_id_campagne, description, photo_path, candidat_id
 -- 5. INSERTION DE QUELQUES VOTES (optionnel)
 -- ===============================================
 
--- Quelques électeurs ont déjà voté (pour les tests)
-INSERT INTO votes (electeur_id, candidat_id, date_vote) VALUES
-((SELECT id_electeur FROM electeur WHERE external_id_electeur = 'electeur-001'),
- (SELECT id FROM candidat WHERE external_id_candidat = 'candidat-002'),
- NOW() - INTERVAL '2 hours'),
-
-((SELECT id_electeur FROM electeur WHERE external_id_electeur = 'electeur-005'),
- (SELECT id FROM candidat WHERE external_id_candidat = 'candidat-001'),
- NOW() - INTERVAL '1 hour'),
-
-((SELECT id_electeur FROM electeur WHERE external_id_electeur = 'electeur-010'),
- (SELECT id FROM candidat WHERE external_id_candidat = 'candidat-003'),
- NOW() - INTERVAL '30 minutes'),
-
-((SELECT id_electeur FROM electeur WHERE external_id_electeur = 'electeur-015'),
- (SELECT id FROM candidat WHERE external_id_candidat = 'candidat-002'),
- NOW() - INTERVAL '45 minutes'),
-
-((SELECT id_electeur FROM electeur WHERE external_id_electeur = 'electeur-020'),
- (SELECT id FROM candidat WHERE external_id_candidat = 'candidat-004'),
- NOW() - INTERVAL '20 minutes');
-
--- Mettre à jour le statut des électeurs qui ont voté
-UPDATE electeur SET a_vote = true WHERE external_id_electeur IN (
-    'electeur-001', 'electeur-005', 'electeur-010', 'electeur-015', 'electeur-020'
-);
 
 -- ===============================================
 -- VÉRIFICATIONS ET STATISTIQUES
 -- ===============================================
 
 -- Vérifier les données insérées
-SELECT 'ADMINISTRATEURS' as type, COUNT(*) as nombre FROM administrateur
-UNION ALL
-SELECT 'ÉLECTEURS', COUNT(*) FROM electeur
-UNION ALL
+
 SELECT 'CANDIDATS', COUNT(*) FROM candidat
 UNION ALL
 SELECT 'CAMPAGNES', COUNT(*) FROM campagne
 UNION ALL
-SELECT 'VOTES', COUNT(*) FROM votes;
 
 -- Afficher le taux de participation
 SELECT
@@ -208,26 +125,3 @@ SELECT
 -- NOTES IMPORTANTES
 -- ===============================================
 
-/*
-🔐 MOTS DE PASSE TEMPORAIRES :
-- Tous les utilisateurs ont le mot de passe temporaire : TempPass123!
-- Les électeurs devront changer leur mot de passe à la première connexion
-- Les administrateurs peuvent se connecter directement
-
-📧 COMPTES DE TEST :
-- Admin : admin@elecam.cm / TempPass123!
-- Électeur : paul.nkomo@gmail.com / TempPass123! (à changer)
-
-🗳️ ÉTAT DES VOTES :
-- 5 électeurs ont déjà voté (pour tester les résultats)
-- 25 électeurs peuvent encore voter
-- Taux de participation initial : 16,67%
-
-🏛️ CANDIDATS PRÉSIDENTIELS :
-- 6 candidats représentant différentes tendances politiques du Cameroun
-- 10 campagnes au total (certains candidats ont plusieurs campagnes)
-
-📍 REPRÉSENTATION GÉOGRAPHIQUE :
-- Électeurs de toutes les régions du Cameroun
-- Noms inspirés des localités et ethnies camerounaises
-*/

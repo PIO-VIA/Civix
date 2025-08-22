@@ -326,7 +326,7 @@ public class CandidatController {
             HealthCheckDTO health = HealthCheckDTO.builder()
                     .status("UP")
                     .nombreCandidats(nombreCandidats)
-                    .timestamp(java.time.LocalDateTime.now())
+                    .timestamp(java.time.LocalDate.now())
                     .message("Service candidats opérationnel")
                     .build();
 
@@ -338,7 +338,7 @@ public class CandidatController {
             HealthCheckDTO health = HealthCheckDTO.builder()
                     .status("DOWN")
                     .nombreCandidats(0)
-                    .timestamp(java.time.LocalDateTime.now())
+                    .timestamp(java.time.LocalDate.now())
                     .message("Erreur service candidats: " + e.getMessage())
                     .build();
 
@@ -356,7 +356,7 @@ public class CandidatController {
     public static class HealthCheckDTO {
         private String status;
         private long nombreCandidats;
-        private java.time.LocalDateTime timestamp;
+        private java.time.LocalDate timestamp;
         private String message;
     }
 }

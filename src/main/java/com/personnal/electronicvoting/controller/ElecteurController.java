@@ -289,7 +289,7 @@ public class ElecteurController {
                             .message(electeur.isAVote() ?
                                     "Merci pour votre participation au vote." :
                                     "N'oubliez pas de voter !")
-                            .dateCreation(java.time.LocalDateTime.now())
+                            .dateCreation(java.time.LocalDate.now())
                             .lue(false)
                             .build()
             );
@@ -369,7 +369,7 @@ public class ElecteurController {
         private String type;
         private String titre;
         private String message;
-        private java.time.LocalDateTime dateCreation;
+        private java.time.LocalDate dateCreation;
         private boolean lue;
     }
 

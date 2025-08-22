@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class ReportsController {
             RapportResultatsDTO rapport = RapportResultatsDTO.builder()
                     .metadonnees(MetadonneesRapportDTO.builder()
                             .titre("Rapport Complet des Résultats")
-                            .dateGeneration(LocalDateTime.now())
+                            .dateGeneration(LocalDate.now())
                             .auteur("Système Electoral")
                             .version("1.0")
                             .statut("FINAL")
@@ -119,7 +119,7 @@ public class ReportsController {
             RapportParticipationDTO rapport = RapportParticipationDTO.builder()
                     .metadonnees(MetadonneesRapportDTO.builder()
                             .titre("Rapport de Participation")
-                            .dateGeneration(LocalDateTime.now())
+                            .dateGeneration(LocalDate.now())
                             .auteur("Système Electoral")
                             .version("1.0")
                             .statut("PROVISOIRE")
@@ -173,7 +173,7 @@ public class ReportsController {
             RapportCandidatsDTO rapport = RapportCandidatsDTO.builder()
                     .metadonnees(MetadonneesRapportDTO.builder()
                             .titre("Rapport d'Analyse des Candidats")
-                            .dateGeneration(LocalDateTime.now())
+                            .dateGeneration(LocalDate.now())
                             .auteur("Système Electoral")
                             .version("1.0")
                             .statut("ANALYSE")
@@ -226,7 +226,7 @@ public class ReportsController {
             RapportCampagnesDTO rapport = RapportCampagnesDTO.builder()
                     .metadonnees(MetadonneesRapportDTO.builder()
                             .titre("Rapport d'Efficacité des Campagnes")
-                            .dateGeneration(LocalDateTime.now())
+                            .dateGeneration(LocalDate.now())
                             .auteur("Système Electoral")
                             .version("1.0")
                             .statut("ANALYSE")
@@ -276,7 +276,7 @@ public class ReportsController {
 
             String filename = String.format("rapport_%s_%s.csv",
                     typeRapport,
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")));
+                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")));
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
@@ -328,7 +328,7 @@ public class ReportsController {
             RapportExecutifDTO rapport = RapportExecutifDTO.builder()
                     .metadonnees(MetadonneesRapportDTO.builder()
                             .titre("Rapport Exécutif - Élection")
-                            .dateGeneration(LocalDateTime.now())
+                            .dateGeneration(LocalDate.now())
                             .auteur("Direction Electoral")
                             .version("1.0")
                             .statut("CONFIDENTIEL")
@@ -669,7 +669,7 @@ public class ReportsController {
     @lombok.AllArgsConstructor
     public static class MetadonneesRapportDTO {
         private String titre;
-        private LocalDateTime dateGeneration;
+        private LocalDate dateGeneration;
         private String auteur;
         private String version;
         private String statut;

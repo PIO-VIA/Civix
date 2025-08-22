@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.UUID;
@@ -41,17 +41,13 @@ public class Election {
 
     @NotNull(message = "La date de début est obligatoire")
     @Column(name = "date_debut", nullable = false)
-    private LocalDateTime dateDebut;
+    private LocalDate dateDebut;
 
     @NotNull(message = "La date de fin est obligatoire")
     @Column(name = "date_fin", nullable = false)
-    private LocalDateTime dateFin;
+    private LocalDate dateFin;
 
-    @Column(name = "date_debut_validite")
-    private LocalDateTime dateDebutValidite;
 
-    @Column(name = "date_fin_validite")
-    private LocalDateTime dateFinValidite;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "statut", nullable = false)
@@ -59,14 +55,12 @@ public class Election {
     private StatutElection statut = StatutElection.PLANIFIEE;
 
     @Column(name = "date_creation", nullable = false, updatable = false)
-    private LocalDateTime dateCreation;
+    private LocalDate dateCreation;
 
     @Column(name = "date_modification")
-    private LocalDateTime dateModification;
+    private LocalDate dateModification;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "administrateur_id", nullable = false)
-    private Administrateur administrateur;
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -107,39 +101,23 @@ public class Election {
         if (this.externalIdElection == null) {
             this.externalIdElection = UUID.randomUUID().toString();
         }
-        this.dateCreation = LocalDateTime.now();
-        this.dateModification = LocalDateTime.now();
+        this.dateCreation = LocalDate.now();
+        this.dateModification = LocalDate.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.dateModification = LocalDateTime.now();
+        this.dateModification = LocalDate.now();
     }
 
     public boolean estActive() {
-        LocalDateTime maintenant = LocalDateTime.now();
+        LocalDate maintenant = LocalDate.now();
         return this.statut == StatutElection.EN_COURS &&
                maintenant.isAfter(this.dateDebut) &&
                maintenant.isBefore(this.dateFin);
     }
 
-    public boolean estDansLaPeriodeDeValidite() {
-        if (dateDebutValidite == null && dateFinValidite == null) {
-            return true;
-        }
-        
-        LocalDateTime maintenant = LocalDateTime.now();
-        
-        if (dateDebutValidite != null && maintenant.isBefore(dateDebutValidite)) {
-            return false;
-        }
-        
-        if (dateFinValidite != null && maintenant.isAfter(dateFinValidite)) {
-            return false;
-        }
-        
-        return true;
-    }
+
 
     public boolean electeurEstAutorise(String electeurId) {
         return this.electeursAutorises.stream()

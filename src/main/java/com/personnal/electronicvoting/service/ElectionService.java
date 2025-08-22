@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,135 +34,11 @@ public class ElectionService {
 
     // ==================== GESTION ÉLECTIONS ADMINISTRATEUR ====================
 
-    @Transactional
-    public ElectionDTO creerElection(CreateElectionRequest request, String administrateurId) {
-        log.info("🗳️ Création d'une élection par l'administrateur: {}", administrateurId);
 
-        validateCreateElectionRequest(request);
 
-        Administrateur administrateur = administrateurRepository.findByExternalIdAdministrateur(administrateurId)
-                .orElseThrow(() -> new RuntimeException("Administrateur non trouvé: " + administrateurId));
 
-        Election election = Election.builder()
-                .titre(request.getTitre())
-                .description(request.getDescription())
-                .photo(request.getPhoto())
-                .dateDebut(request.getDateDebut())
-                .dateFin(request.getDateFin())
-                .dateDebutValidite(request.getDateDebutValidite())
-                .dateFinValidite(request.getDateFinValidite())
-                .autoriserVoteMultiple(request.getAutoriserVoteMultiple())
-                .nombreMaxVotesParElecteur(request.getNombreMaxVotesParElecteur())
-                .resultatsVisibles(request.getResultatsVisibles())
-                .administrateur(administrateur)
-                .statut(Election.StatutElection.PLANIFIEE)
-                .build();
 
-        if (request.getElecteursAutorises() != null && !request.getElecteursAutorises().isEmpty()) {
-            Set<Electeur> electeurs = electeurRepository.findByExternalIdElecteurIn(request.getElecteursAutorises())
-                    .stream()
-                    .collect(Collectors.toSet());
-            election.setElecteursAutorises(electeurs);
-        }
 
-        if (request.getCandidatsParticipants() != null && !request.getCandidatsParticipants().isEmpty()) {
-            Set<Candidat> candidats = candidatRepository.findByExternalIdCandidatIn(request.getCandidatsParticipants())
-                    .stream()
-                    .collect(Collectors.toSet());
-            election.setCandidats(candidats);
-        }
-
-        Election electionSauvegardee = electionRepository.save(election);
-        log.info("✅ Élection créée avec l'ID: {}", electionSauvegardee.getExternalIdElection());
-
-        return electionMapper.toDTO(electionSauvegardee);
-    }
-
-    @Transactional
-    public ElectionDTO modifierElection(String electionId, UpdateElectionRequest request, String administrateurId) {
-        log.info("📝 Modification de l'élection {} par l'administrateur: {}", electionId, administrateurId);
-
-        Election election = electionRepository.findByExternalIdElection(electionId)
-                .orElseThrow(() -> new RuntimeException("Élection non trouvée: " + electionId));
-
-        if (!election.getAdministrateur().getExternalIdAdministrateur().equals(administrateurId)) {
-            throw new RuntimeException("Accès non autorisé à cette élection");
-        }
-
-        validateUpdateElectionRequest(request, election);
-
-        if (request.getTitre() != null) {
-            election.setTitre(request.getTitre());
-        }
-        if (request.getDescription() != null) {
-            election.setDescription(request.getDescription());
-        }
-        if (request.getPhoto() != null) {
-            election.setPhoto(request.getPhoto());
-        }
-        if (request.getDateDebut() != null) {
-            election.setDateDebut(request.getDateDebut());
-        }
-        if (request.getDateFin() != null) {
-            election.setDateFin(request.getDateFin());
-        }
-        if (request.getDateDebutValidite() != null) {
-            election.setDateDebutValidite(request.getDateDebutValidite());
-        }
-        if (request.getDateFinValidite() != null) {
-            election.setDateFinValidite(request.getDateFinValidite());
-        }
-        if (request.getStatut() != null) {
-            election.setStatut(request.getStatut());
-        }
-        if (request.getAutoriserVoteMultiple() != null) {
-            election.setAutoriserVoteMultiple(request.getAutoriserVoteMultiple());
-        }
-        if (request.getNombreMaxVotesParElecteur() != null) {
-            election.setNombreMaxVotesParElecteur(request.getNombreMaxVotesParElecteur());
-        }
-        if (request.getResultatsVisibles() != null) {
-            election.setResultatsVisibles(request.getResultatsVisibles());
-        }
-
-        if (request.getElecteursAutorises() != null) {
-            Set<Electeur> electeurs = electeurRepository.findByExternalIdElecteurIn(request.getElecteursAutorises())
-                    .stream()
-                    .collect(Collectors.toSet());
-            election.setElecteursAutorises(electeurs);
-        }
-
-        if (request.getCandidatsParticipants() != null) {
-            Set<Candidat> candidats = candidatRepository.findByExternalIdCandidatIn(request.getCandidatsParticipants())
-                    .stream()
-                    .collect(Collectors.toSet());
-            election.setCandidats(candidats);
-        }
-
-        Election electionModifiee = electionRepository.save(election);
-        log.info("✅ Élection modifiée: {}", electionId);
-
-        return electionMapper.toDTO(electionModifiee);
-    }
-
-    @Transactional
-    public void supprimerElection(String electionId, String administrateurId) {
-        log.info("🗑️ Suppression de l'élection {} par l'administrateur: {}", electionId, administrateurId);
-
-        Election election = electionRepository.findByExternalIdElection(electionId)
-                .orElseThrow(() -> new RuntimeException("Élection non trouvée: " + electionId));
-
-        if (!election.getAdministrateur().getExternalIdAdministrateur().equals(administrateurId)) {
-            throw new RuntimeException("Accès non autorisé à cette élection");
-        }
-
-        if (election.getStatut() == Election.StatutElection.EN_COURS) {
-            throw new RuntimeException("Impossible de supprimer une élection en cours");
-        }
-
-        electionRepository.delete(election);
-        log.info("✅ Élection supprimée: {}", electionId);
-    }
 
     // ==================== CONSULTATION ÉLECTIONS ====================
 
@@ -186,16 +62,7 @@ public class ElectionService {
         return electionMapper.toDTO(election);
     }
 
-    public List<ElectionDTO> listerElectionsAdministrateur(String administrateurId) {
-        log.info("📋 Consultation des élections de l'administrateur: {}", administrateurId);
 
-        List<Election> elections = electionRepository.findByAdministrateur_ExternalIdAdministrateur(administrateurId);
-        log.info("📊 {} élections trouvées pour l'administrateur", elections.size());
-
-        return elections.stream()
-                .map(electionMapper::toDTO)
-                .toList();
-    }
 
     public List<ElectionDTO> listerElectionsDisponiblesPourElecteur(String electeurId) {
         log.info("🗳️ Consultation des élections disponibles pour l'électeur: {}", electeurId);
@@ -205,7 +72,6 @@ public class ElectionService {
 
         List<Election> electionsFiltrees = elections.stream()
                 .filter(Election::estActive)
-                .filter(Election::estDansLaPeriodeDeValidite)
                 .toList();
 
         log.info("📊 {} élections disponibles pour l'électeur", electionsFiltrees.size());
@@ -306,50 +172,20 @@ public class ElectionService {
                 .tauxParticipation(election.getElecteursAutorises().size() > 0 ? 
                         (double) totalVotes / election.getElecteursAutorises().size() * 100 : 0)
                 .resultatsParCandidat(resultats)
-                .dateCalcul(LocalDateTime.now())
+                .dateCalcul(LocalDate.now())
                 .build();
     }
 
     // ==================== VALIDATION ====================
 
-    private void validateCreateElectionRequest(CreateElectionRequest request) {
-        if (request.getDateDebut().isAfter(request.getDateFin())) {
-            throw new RuntimeException("La date de début doit être antérieure à la date de fin");
-        }
 
-        if (request.getDateDebutValidite() != null && request.getDateFinValidite() != null) {
-            if (request.getDateDebutValidite().isAfter(request.getDateFinValidite())) {
-                throw new RuntimeException("La date de début de validité doit être antérieure à la date de fin de validité");
-            }
-        }
-
-        if (request.getDateDebut().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("La date de début ne peut pas être dans le passé");
-        }
-    }
-
-    private void validateUpdateElectionRequest(UpdateElectionRequest request, Election election) {
-        if (election.getStatut() == Election.StatutElection.EN_COURS) {
-            if (request.getDateDebut() != null || request.getDateFin() != null) {
-                throw new RuntimeException("Impossible de modifier les dates d'une élection en cours");
-            }
-        }
-
-        if (request.getDateDebut() != null && request.getDateFin() != null) {
-            if (request.getDateDebut().isAfter(request.getDateFin())) {
-                throw new RuntimeException("La date de début doit être antérieure à la date de fin");
-            }
-        }
-    }
 
     private void validateVote(Election election, Electeur electeur, Candidat candidat) {
         if (!election.estActive()) {
             throw new RuntimeException("Cette élection n'est pas active");
         }
 
-        if (!election.estDansLaPeriodeDeValidite()) {
-            throw new RuntimeException("Cette élection n'est pas dans sa période de validité");
-        }
+
 
         if (!election.electeurEstAutorise(electeur.getExternalIdElecteur())) {
             throw new RuntimeException("Électeur non autorisé pour cette élection");
@@ -373,7 +209,7 @@ public class ElectionService {
         private Long totalElecteursAutorises;
         private Double tauxParticipation;
         private List<ResultatCandidatDTO> resultatsParCandidat;
-        private LocalDateTime dateCalcul;
+        private LocalDate dateCalcul;
     }
 
     @lombok.Data

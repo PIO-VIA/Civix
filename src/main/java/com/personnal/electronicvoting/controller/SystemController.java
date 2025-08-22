@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +64,7 @@ public class SystemController {
 
             HealthCheckDTO healthCheck = HealthCheckDTO.builder()
                     .status(todServiceHealthy ? "UP" : "DOWN")
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .application(applicationName)
                     .version("1.0.0")
                     .services(Map.of(
@@ -85,7 +85,7 @@ public class SystemController {
 
             HealthCheckDTO healthCheck = HealthCheckDTO.builder()
                     .status("DOWN")
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .application(applicationName)
                     .version("1.0.0")
                     .services(Map.of())
@@ -121,7 +121,7 @@ public class SystemController {
             MetriquesBusinessDTO metriquesBusiness = calculerMetriquesBusiness();
 
             SystemMetricsDTO metrics = SystemMetricsDTO.builder()
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .metriquesApplication(metriquesApp)
                     .metriquesBDD(metriquesBDD)
                     .metriquesPerformance(metriquesPerf)
@@ -153,7 +153,7 @@ public class SystemController {
                         .nom(applicationName)
                         .version("1.0.0")
                         .description("Plateforme de Vote Électronique")
-                        .dateCompilation(LocalDateTime.of(2024, 12, 1, 10, 0))
+                        .dateCompilation(LocalDate.of(2024, 12, 1))
                         .profil("production")
                         .port(serverPort)
                         .build())
@@ -182,7 +182,7 @@ public class SystemController {
                                 .build()
                 ))
                 .configuration(obtenirConfigurationActive())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .build();
 
         return ResponseEntity.ok(systemInfo);
@@ -214,7 +214,7 @@ public class SystemController {
                     .nombreEntrees(logs.size())
                     .limite(limite)
                     .logs(logs)
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .build();
 
             return ResponseEntity.ok(logsResponse);
@@ -252,7 +252,7 @@ public class SystemController {
                     .requestsPerMinute(calculerRequetesParMinute())
                     .errorsLast24h(calculerErreursLast24h())
                     .averageResponseTime(calculerTempsReponseMovie())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .alertes(detecterAlertes())
                     .build();
 
@@ -291,12 +291,12 @@ public class SystemController {
                     .modeMaintenanceActif(nouveauStatut)
                     .message(request.getMessage() != null ? request.getMessage() :
                             (nouveauStatut ? "Maintenance en cours" : "Service normal"))
-                    .debutMaintenance(nouveauStatut ? LocalDateTime.now() : null)
+                    .debutMaintenance(nouveauStatut ? LocalDate.now() : null)
                     .finMaintenancePrevue(nouveauStatut ?
-                            LocalDateTime.now().plusHours(request.getDureeHeures()) : null)
+                            LocalDate.now() : null)
                     .servicesIndisponibles(nouveauStatut ?
                             List.of("Vote", "Gestion candidats") : List.of())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .build();
 
             log.info("✅ Mode maintenance {} avec succès",
@@ -335,7 +335,7 @@ public class SystemController {
                     .totalOperations(4)
                     .operationsSuccessful(4)
                     .dureeMs(calculerDureeNettoyage())
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .build();
 
             log.info("✅ Nettoyage système terminé - {} opérations", result.getTotalOperations());
@@ -376,10 +376,10 @@ public class SystemController {
                     .nombreEnregistrements(calculerNombreEnregistrements())
                     .dureeMs(2340L)
                     .cheminFichier("/backups/backup_" +
-                            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".sql")
+                            LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".sql")
                     .checksum("SHA256:a1b2c3d4e5f6...")
                     .statut("SUCCESS")
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDate.now())
                     .build();
 
             log.info("✅ Backup créé avec succès - ID: {}", backup.getBackupId());
@@ -411,14 +411,14 @@ public class SystemController {
             List<BackupInfoDTO> backups = List.of(
                     BackupInfoDTO.builder()
                             .backupId("backup_001")
-                            .date(LocalDateTime.now().minusDays(1))
+                            .date(LocalDate.now().minusDays(1))
                             .type("FULL")
                             .taille("44.8 MB")
                             .statut("COMPLETED")
                             .build(),
                     BackupInfoDTO.builder()
                             .backupId("backup_002")
-                            .date(LocalDateTime.now().minusDays(2))
+                            .date(LocalDate.now().minusDays(2))
                             .type("INCREMENTAL")
                             .taille("12.3 MB")
                             .statut("COMPLETED")
@@ -480,8 +480,8 @@ public class SystemController {
                             "Implémenter la rotation des tokens",
                             "Ajouter monitoring des tentatives d'intrusion"
                     ))
-                    .derniereVerification(LocalDateTime.now())
-                    .prochainAudit(LocalDateTime.now().plusDays(30))
+                    .derniereVerification(LocalDate.now())
+                    .prochainAudit(LocalDate.now().plusDays(30))
                     .build();
 
             return ResponseEntity.ok(audit);
@@ -650,13 +650,13 @@ public class SystemController {
     private List<LogEntryDTO> genererLogsSimules(String niveau, int limite) {
         return List.of(
                 LogEntryDTO.builder()
-                        .timestamp(LocalDateTime.now().minusMinutes(5))
+                        .timestamp(LocalDate.now())
                         .niveau("INFO")
                         .logger("com.personnal.electronicvoting.service.VoteService")
                         .message("Vote enregistré avec succès")
                         .build(),
                 LogEntryDTO.builder()
-                        .timestamp(LocalDateTime.now().minusMinutes(10))
+                        .timestamp(LocalDate.now())
                         .niveau("WARN")
                         .logger("com.personnal.electronicvoting.controller.AuthController")
                         .message("Tentative de connexion avec mot de passe incorrect")
@@ -687,7 +687,7 @@ public class SystemController {
                         .type("PERFORMANCE")
                         .niveau("LOW")
                         .message("Utilisation mémoire élevée (68%)")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDate.now())
                         .build()
         );
     }
@@ -720,7 +720,7 @@ public class SystemController {
     @lombok.AllArgsConstructor
     public static class HealthCheckDTO {
         private String status;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
         private String application;
         private String version;
         private Map<String, HealthStatusDTO> services;
@@ -743,7 +743,7 @@ public class SystemController {
     @lombok.NoArgsConstructor
     @lombok.AllArgsConstructor
     public static class SystemMetricsDTO {
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
         private MetriquesApplicationDTO metriquesApplication;
         private MetriquesBDDDTO metriquesBDD;
         private MetriquesPerformanceDTO metriquesPerformance;
@@ -805,7 +805,7 @@ public class SystemController {
         private EnvironnementDTO environnement;
         private List<DependencyDTO> dependencies;
         private Map<String, Object> configuration;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
     }
 
     @lombok.Data
@@ -816,7 +816,7 @@ public class SystemController {
         private String nom;
         private String version;
         private String description;
-        private LocalDateTime dateCompilation;
+        private LocalDate dateCompilation;
         private String profil;
         private String port;
     }
@@ -852,7 +852,7 @@ public class SystemController {
         private int nombreEntrees;
         private int limite;
         private List<LogEntryDTO> logs;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
     }
 
     @lombok.Data
@@ -860,7 +860,7 @@ public class SystemController {
     @lombok.NoArgsConstructor
     @lombok.AllArgsConstructor
     public static class LogEntryDTO {
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
         private String niveau;
         private String logger;
         private String message;
@@ -880,7 +880,7 @@ public class SystemController {
         private int requestsPerMinute;
         private int errorsLast24h;
         private long averageResponseTime;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
         private List<AlerteSystemeDTO> alertes;
     }
 
@@ -903,7 +903,7 @@ public class SystemController {
         private String type;
         private String niveau;
         private String message;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
     }
 
     @lombok.Data
@@ -922,10 +922,10 @@ public class SystemController {
     public static class MaintenanceDTO {
         private boolean modeMaintenanceActif;
         private String message;
-        private LocalDateTime debutMaintenance;
-        private LocalDateTime finMaintenancePrevue;
+        private LocalDate debutMaintenance;
+        private LocalDate finMaintenancePrevue;
         private List<String> servicesIndisponibles;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
     }
 
     @lombok.Data
@@ -940,7 +940,7 @@ public class SystemController {
         private int totalOperations;
         private int operationsSuccessful;
         private long dureeMs;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
     }
 
     @lombok.Data
@@ -957,7 +957,7 @@ public class SystemController {
         private String cheminFichier;
         private String checksum;
         private String statut;
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
     }
 
     @lombok.Data
@@ -966,7 +966,7 @@ public class SystemController {
     @lombok.AllArgsConstructor
     public static class BackupInfoDTO {
         private String backupId;
-        private LocalDateTime date;
+        private LocalDate date;
         private String type;
         private String taille;
         private String statut;
@@ -981,8 +981,8 @@ public class SystemController {
         private List<VerificationSecuriteDTO> verificationsEffectuees;
         private List<String> vulnerabilitesDetectees;
         private List<String> recommandations;
-        private LocalDateTime derniereVerification;
-        private LocalDateTime prochainAudit;
+        private LocalDate derniereVerification;
+        private LocalDate prochainAudit;
     }
 
     @lombok.Data

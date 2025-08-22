@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,7 +64,7 @@ public class VoteService {
             Vote vote = new Vote();
             vote.setElecteur(electeur);
             vote.setCandidat(candidat);
-            vote.setDateVote(LocalDateTime.now());
+            vote.setDateVote(LocalDate.now());
 
             Vote voteSauve = voteRepository.save(vote);
 
@@ -246,8 +246,7 @@ public class VoteService {
 
             Map<String, Long> votesParHeure = tousLesVotes.stream()
                     .collect(Collectors.groupingBy(
-                            vote -> vote.getDateVote().toLocalDate().toString() + " " +
-                                    vote.getDateVote().getHour() + "h",
+                            vote -> vote.getDateVote().toString() ,
                             Collectors.counting()
                     ));
 
@@ -320,7 +319,7 @@ public class VoteService {
         private String electeurId;
         private boolean aVote;
         private boolean peutVoter;
-        private LocalDateTime dateVote; // null si n'a pas voté
+        private LocalDate dateVote; // null si n'a pas voté
         private String messageStatut;
     }
 
@@ -339,7 +338,7 @@ public class VoteService {
             boolean peutVoter = !aVote;
 
             String message;
-            LocalDateTime dateVote = null;
+            LocalDate dateVote = null;
 
             if (aVote) {
                 message = "Vous avez déjà voté. Merci pour votre participation !";

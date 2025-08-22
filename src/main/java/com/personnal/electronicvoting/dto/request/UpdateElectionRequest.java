@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import com.personnal.electronicvoting.model.Election;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -22,17 +22,12 @@ public class UpdateElectionRequest {
 
     private String photo;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateDebut;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateDebut;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateFin;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateFin;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateDebutValidite;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateFinValidite;
 
     private Election.StatutElection statut;
 

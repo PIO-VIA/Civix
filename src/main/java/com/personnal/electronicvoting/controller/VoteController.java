@@ -303,7 +303,7 @@ public class VoteController {
         private String message;
         private String electeurId;
         private String candidatId;
-        private java.time.LocalDateTime dateVote;
+        private java.time.LocalDate dateVote;
     }
 
     /**

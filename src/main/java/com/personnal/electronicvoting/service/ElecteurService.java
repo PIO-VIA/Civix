@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +56,7 @@ public class ElecteurService {
             return ElecteurProfilDTO.builder()
                     .electeur(userMapper.toDTO(electeur))
                     .aVote(aVote)
-                    .dateInscription(LocalDateTime.now())
+                    .dateInscription(LocalDate.now())
                     .nombreTotalElecteurs(totalElecteurs)
                     .tauxParticipationGlobal(Math.round(tauxParticipation * 100.0) / 100.0)
                     .messageStatut(aVote ?
@@ -315,7 +315,7 @@ public class ElecteurService {
     public static class ElecteurProfilDTO {
         private ElecteurDTO electeur;
         private boolean aVote;
-        private LocalDateTime dateInscription;
+        private LocalDate dateInscription;
         private long nombreTotalElecteurs;
         private double tauxParticipationGlobal;
         private String messageStatut;

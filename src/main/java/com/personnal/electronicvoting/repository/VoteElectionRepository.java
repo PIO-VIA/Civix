@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +35,7 @@ public interface VoteElectionRepository extends JpaRepository<VoteElection, Long
     List<Object[]> countVotesParCandidatPourElection(@Param("electionId") String electionId, @Param("statut") StatutVote statut);
 
     @Query("SELECT v FROM VoteElection v WHERE v.dateVote BETWEEN :dateDebut AND :dateFin")
-    List<VoteElection> findVotesEntre(@Param("dateDebut") LocalDateTime dateDebut, @Param("dateFin") LocalDateTime dateFin);
+    List<VoteElection> findVotesEntre(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);
 
     @Query("SELECT COUNT(v) FROM VoteElection v WHERE v.election.externalIdElection = :electionId AND v.electeur.externalIdElecteur = :electeurId AND v.statutVote = :statut")
     Long countVotesElecteurPourElection(@Param("electionId") String electionId, @Param("electeurId") String electeurId, @Param("statut") StatutVote statut);

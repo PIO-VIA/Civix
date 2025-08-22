@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
         });
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Validation Error")
                 .message("Données de requête invalides")
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
         log.warn("🔐 Erreur d'authentification: {}", ex.getMessage());
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .error("Authentication Error")
                 .message(ex.getMessage())
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
         log.warn("🚫 Erreur d'autorisation: {}", ex.getMessage());
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.FORBIDDEN.value())
                 .error("Authorization Error")
                 .message(ex.getMessage())
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
         log.warn("🔍 Ressource non trouvée: {}", ex.getMessage());
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Resource Not Found")
                 .message(ex.getMessage())
@@ -117,7 +117,7 @@ public class GlobalExceptionHandler {
         log.warn("⚠️ Erreur métier: {}", ex.getMessage());
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Business Error")
                 .message(ex.getMessage())
@@ -137,7 +137,7 @@ public class GlobalExceptionHandler {
         log.warn("🗳️ Erreur de vote: {}", ex.getMessage());
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.CONFLICT.value())
                 .error("Vote Error")
                 .message(ex.getMessage())
@@ -158,7 +158,7 @@ public class GlobalExceptionHandler {
         log.error("💥 Erreur système inattendue: {}", ex.getMessage(), ex);
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error("Internal Server Error")
                 .message("Une erreur système s'est produite. Veuillez réessayer.")
@@ -178,7 +178,7 @@ public class GlobalExceptionHandler {
         log.error("📧 Erreur d'envoi email: {}", ex.getMessage());
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDate.now())
                 .status(HttpStatus.SERVICE_UNAVAILABLE.value())
                 .error("Email Service Error")
                 .message("Impossible d'envoyer l'email. " + ex.getMessage())
@@ -195,7 +195,7 @@ public class GlobalExceptionHandler {
     @lombok.NoArgsConstructor
     @lombok.AllArgsConstructor
     public static class ErrorResponse {
-        private LocalDateTime timestamp;
+        private LocalDate timestamp;
         private int status;
         private String error;
         private String message;

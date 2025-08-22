@@ -4,7 +4,7 @@ import lombok.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "votes_election", uniqueConstraints = {
@@ -34,7 +34,7 @@ public class VoteElection {
     private Candidat candidat;
 
     @Column(name = "date_vote", nullable = false)
-    private LocalDateTime dateVote;
+    private LocalDate dateVote;
 
     @Column(name = "adresse_ip")
     private String adresseIp;
@@ -50,7 +50,7 @@ public class VoteElection {
     @PrePersist
     public void prePersist() {
         if (this.dateVote == null) {
-            this.dateVote = LocalDateTime.now();
+            this.dateVote = LocalDate.now();
         }
     }
 

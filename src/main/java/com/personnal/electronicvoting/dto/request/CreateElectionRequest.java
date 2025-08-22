@@ -4,7 +4,7 @@ import lombok.*;
 import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -23,18 +23,12 @@ public class CreateElectionRequest {
     private String photo;
 
     @NotNull(message = "La date de début est obligatoire")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateDebut;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateDebut;
 
     @NotNull(message = "La date de fin est obligatoire")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateFin;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateDebutValidite;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateFinValidite;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateFin;
 
     private Boolean autoriserVoteMultiple = false;
 

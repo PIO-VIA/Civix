@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +59,7 @@ public class PublicController {
                             .build())
                     .topCandidats(topCandidats)
                     .messageActualite("L'élection est en cours ! Consultez les candidats et votez.")
-                    .horodatage(LocalDateTime.now())
+                    .horodatage(LocalDate.now())
                     .versionPlateforme("1.0.0")
                     .build();
 
@@ -96,7 +96,7 @@ public class PublicController {
                     .statistiquesCampagnes(statsCampagnes)
                     .statistiquesDetaillesCandidats(statsDetaillesCandidats)
                     .metadonnees(MetadonneesDTO.builder()
-                            .dateDerniereMAJ(LocalDateTime.now())
+                            .dateDerniereMAJ(LocalDate.now())
                             .frequenceMAJ("Temps réel")
                             .fiabilite("99.9%")
                             .build())
@@ -137,8 +137,7 @@ public class PublicController {
                     .candidatEnTete(candidatEnTete)
                     .statistiquesGlobales(stats)
                     .progressionVote(progression)
-                    .derniereMiseAJour(LocalDateTime.now())
-                    .prochaineMiseAJour(LocalDateTime.now().plusMinutes(1))
+                    .derniereMiseAJour(LocalDate.now())
                     .build();
 
             return ResponseEntity.ok(resultatsTempsReel);
@@ -238,7 +237,6 @@ public class PublicController {
                         .auditTrail("Complet")
                         .conformite("RGPD compliant")
                         .build())
-                .dateMiseEnService(LocalDateTime.of(2024, 1, 1, 0, 0))
                 .build();
 
         return ResponseEntity.ok(info);
@@ -270,7 +268,7 @@ public class PublicController {
                     .campagnesTrouvees(campagnesTrouvees)
                     .nombreTotal(candidatsTrouves.size() + campagnesTrouvees.size())
                     .suggestions(genererSuggestions(terme))
-                    .horodatage(LocalDateTime.now())
+                    .horodatage(LocalDate.now())
                     .build();
 
             log.info("📊 Recherche '{}' - {} résultats", terme, resultats.getNombreTotal());
@@ -316,7 +314,7 @@ public class PublicController {
                             .titre("Nouveau candidat inscrit")
                             .contenu("Un nouveau candidat a rejoint la course !")
                             .type("CANDIDAT")
-                            .datePublication(LocalDateTime.now().minusHours(2))
+                            .datePublication(LocalDate.now())
                             .importance("NORMALE")
                             .build(),
                     ActualiteDTO.builder()
@@ -324,7 +322,7 @@ public class PublicController {
                             .titre("Campagne mise à jour")
                             .contenu("Plusieurs candidats ont mis à jour leurs campagnes.")
                             .type("CAMPAGNE")
-                            .datePublication(LocalDateTime.now().minusHours(4))
+                            .datePublication(LocalDate.now())
                             .importance("BASSE")
                             .build(),
                     ActualiteDTO.builder()
@@ -332,7 +330,7 @@ public class PublicController {
                             .titre("Participation en hausse")
                             .contenu("Le taux de participation continue d'augmenter !")
                             .type("VOTE")
-                            .datePublication(LocalDateTime.now().minusHours(6))
+                            .datePublication(LocalDate.now())
                             .importance("HAUTE")
                             .build()
             );
@@ -361,7 +359,7 @@ public class PublicController {
         private StatistiquesGeneralesDTO statistiquesGenerales;
         private List<VoteService.ResultatVoteDTO> topCandidats;
         private String messageActualite;
-        private LocalDateTime horodatage;
+        private LocalDate horodatage;
         private String versionPlateforme;
     }
 
@@ -393,7 +391,7 @@ public class PublicController {
     @lombok.NoArgsConstructor
     @lombok.AllArgsConstructor
     public static class MetadonneesDTO {
-        private LocalDateTime dateDerniereMAJ;
+        private LocalDate dateDerniereMAJ;
         private String frequenceMAJ;
         private String fiabilite;
     }
@@ -407,8 +405,8 @@ public class PublicController {
         private VoteService.ResultatVoteDTO candidatEnTete;
         private VoteService.StatistiquesVoteDTO statistiquesGlobales;
         private List<VoteService.VoteTemporelDTO> progressionVote;
-        private LocalDateTime derniereMiseAJour;
-        private LocalDateTime prochaineMiseAJour;
+        private LocalDate derniereMiseAJour;
+        private LocalDate prochaineMiseAJour;
     }
 
     @lombok.Data
@@ -435,7 +433,7 @@ public class PublicController {
         private List<String> technologies;
         private SupportDTO support;
         private SecuriteDTO securite;
-        private LocalDateTime dateMiseEnService;
+        private LocalDate dateMiseEnService;
     }
 
     @lombok.Data
@@ -470,7 +468,7 @@ public class PublicController {
         private List<com.personnal.electronicvoting.dto.CampagneDTO> campagnesTrouvees;
         private int nombreTotal;
         private List<String> suggestions;
-        private LocalDateTime horodatage;
+        private LocalDate horodatage;
     }
 
     @lombok.Data
@@ -482,7 +480,7 @@ public class PublicController {
         private String titre;
         private String contenu;
         private String type;
-        private LocalDateTime datePublication;
+        private LocalDate datePublication;
         private String importance;
     }
 }

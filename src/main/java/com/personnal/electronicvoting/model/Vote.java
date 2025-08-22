@@ -4,7 +4,7 @@ import lombok.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "votes", uniqueConstraints = {
@@ -28,6 +28,6 @@ public class Vote {
     @JoinColumn(name = "candidat_id")
     private Candidat candidat;
 
-    private LocalDateTime dateVote = LocalDateTime.now();
+    private LocalDate dateVote = LocalDate.now();
 }
 

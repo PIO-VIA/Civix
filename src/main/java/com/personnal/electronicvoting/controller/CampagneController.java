@@ -391,7 +391,7 @@ public class CampagneController {
                     .status("UP")
                     .nombreCampagnes(stats.getTotalCampagnes())
                     .campagnesAvecPhotos(stats.getCampagnesAvecPhotos())
-                    .timestamp(java.time.LocalDateTime.now())
+                    .timestamp(java.time.LocalDate.now())
                     .message("Service campagnes opérationnel")
                     .build();
 
@@ -404,7 +404,7 @@ public class CampagneController {
                     .status("DOWN")
                     .nombreCampagnes(0)
                     .campagnesAvecPhotos(0)
-                    .timestamp(java.time.LocalDateTime.now())
+                    .timestamp(java.time.LocalDate.now())
                     .message("Erreur service campagnes: " + e.getMessage())
                     .build();
 
@@ -425,7 +425,7 @@ public class CampagneController {
         private String status;
         private long nombreCampagnes;
         private long campagnesAvecPhotos;
-        private java.time.LocalDateTime timestamp;
+        private java.time.LocalDate timestamp;
         private String message;
     }
 }

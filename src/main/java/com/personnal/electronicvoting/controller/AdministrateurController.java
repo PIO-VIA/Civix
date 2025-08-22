@@ -378,9 +378,7 @@ public class AdministrateurController {
 
         try {
             verifierTokenAdmin(token);
-            String administrateurId = authService.obtenirAdminDepuisToken(token.substring(7)).getExternalIdAdministrateur();
-
-            ElectionDTO election = electionService.creerElection(request, administrateurId);
+            ElectionDTO election = administrateurService.creerElection(request);
             log.info("✅ Élection créée: {}", election.getExternalIdElection());
             return ResponseEntity.status(HttpStatus.CREATED).body(election);
 
@@ -450,9 +448,8 @@ public class AdministrateurController {
 
         try {
             verifierTokenAdmin(token);
-            String administrateurId = authService.obtenirAdminDepuisToken(token.substring(7)).getExternalIdAdministrateur();
 
-            ElectionDTO election = electionService.modifierElection(electionId, request, administrateurId);
+            ElectionDTO election = administrateurService.modifierElection(electionId, request);
             log.info("✅ Élection modifiée: {}", electionId);
             return ResponseEntity.ok(election);
 
@@ -476,9 +473,8 @@ public class AdministrateurController {
 
         try {
             verifierTokenAdmin(token);
-            String administrateurId = authService.obtenirAdminDepuisToken(token.substring(7)).getExternalIdAdministrateur();
 
-            electionService.supprimerElection(electionId, administrateurId);
+            administrateurService.supprimerElection(electionId);
             log.info("✅ Élection supprimée: {}", electionId);
             return ResponseEntity.noContent().build();
 
