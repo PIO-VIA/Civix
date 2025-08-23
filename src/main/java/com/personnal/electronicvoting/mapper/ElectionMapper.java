@@ -27,7 +27,6 @@ public interface ElectionMapper {
     @Mapping(target = "externalIdElection", ignore = true)
     @Mapping(target = "dateCreation", ignore = true)
     @Mapping(target = "dateModification", ignore = true)
-    @Mapping(target = "administrateur", ignore = true)
     @Mapping(target = "electeursAutorises", ignore = true)
     @Mapping(target = "candidats", ignore = true)
     @Mapping(target = "votes", ignore = true)
