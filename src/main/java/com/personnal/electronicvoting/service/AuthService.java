@@ -119,10 +119,10 @@ public class AuthService {
      */
     public boolean verifierTokenElecteur(String token) {
         try {
-            log.debug(" Vérification token électeur: {}", token);
+            log.debug("🔍 Vérification token électeur: {}", token);
 
             if (token == null || !token.startsWith("ELECTEUR-")) {
-                log.debug(" Token ne commence pas par ELECTEUR-");
+                log.debug("❌ Token ne commence pas par ELECTEUR-");
                 return false;
             }
 
@@ -133,21 +133,21 @@ public class AuthService {
             // Trouver la dernière occurrence du tiret pour séparer UUID du timestamp
             int lastDashIndex = tokenBody.lastIndexOf('-');
             if (lastDashIndex == -1) {
-                log.debug(" Format token invalide - pas de timestamp");
+                log.debug("❌ Format token invalide - pas de timestamp");
                 return false;
             }
 
             String electeurId = tokenBody.substring(0, lastDashIndex);
 
-            log.debug(" Extraction électeur ID: {}", electeurId);
+            log.debug("🔍 Extraction électeur ID: {}", electeurId);
 
             boolean exists = electeurRepository.findByExternalIdElecteur(electeurId).isPresent();
-            log.debug(" Électeur existe: {}", exists);
+            log.debug("✅ Électeur existe: {}", exists);
 
             return exists;
 
         } catch (Exception e) {
-            log.debug(" Erreur validation token électeur: {}", e.getMessage());
+            log.debug("💥 Erreur validation token électeur: {}", e.getMessage());
             return false;
         }
     }
@@ -171,7 +171,7 @@ public class AuthService {
             // Trouver la dernière occurrence du tiret pour séparer UUID du timestamp
             int lastDashIndex = tokenBody.lastIndexOf('-');
             if (lastDashIndex == -1) {
-                log.debug(" Format token invalide - pas de timestamp");
+                log.debug("❌ Format token invalide - pas de timestamp");
                 return false;
             }
 
@@ -236,6 +236,7 @@ public class AuthService {
      *  Changer mot de passe électeur (première connexion)
      */
 
+    @Transactional
     public AuthResponse changerMotDePasseElecteur(String token, String ancienMotDePasse, String nouveauMotDePasse) {
         log.info(" Changement mot de passe électeur");
 

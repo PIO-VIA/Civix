@@ -32,6 +32,9 @@ public class ElecteurController {
      * 🔒 Vérifier token électeur et retourner l'électeur
      */
     private com.personnal.electronicvoting.model.Electeur verifierEtObtenirElecteur(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new RuntimeException("Token d'autorisation requis");
+        }
         String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
         if (!authService.verifierTokenElecteur(cleanToken)) {
             throw new RuntimeException("Token électeur invalide");
@@ -48,7 +51,7 @@ public class ElecteurController {
     @Operation(summary = "Mon profil",
             description = "Obtenir les informations de profil de l'électeur connecté")
     public ResponseEntity<ElecteurService.ElecteurProfilDTO> obtenirMonProfil(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(value = "Authorization", required = false) String token) {
 
         log.info("👤 Consultation profil électeur");
 
@@ -76,12 +79,17 @@ public class ElecteurController {
     @Operation(summary = "Changer mot de passe",
             description = "Changer le mot de passe de l'électeur connecté")
     public ResponseEntity<String> changerMotDePasse(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @Valid @RequestBody ChangePasswordRequest request) {
 
-        log.info("Changement mot de passe électeur");
+        log.info("🔑 Changement mot de passe électeur");
 
         try {
+            if (token == null || token.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Token d'autorisation requis");
+            }
+            
             // Nettoyer le token
             String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
@@ -92,15 +100,15 @@ public class ElecteurController {
                     request.getNouveauMotDePasse()
             );
 
-            log.info("Mot de passe changé avec succès pour électeur: {}", authResponse.getUserId());
+            log.info("✅ Mot de passe changé avec succès pour électeur: {}", authResponse.getUserId());
 
             return ResponseEntity.ok("Mot de passe changé avec succès");
 
         } catch (RuntimeException e) {
-            log.warn("Erreur changement mot de passe: {}", e.getMessage());
+            log.warn("❌ Erreur changement mot de passe: {}", e.getMessage());
             return ResponseEntity.badRequest().body("Erreur: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Erreur système changement mot de passe: {}", e.getMessage(), e);
+            log.error("💥 Erreur système changement mot de passe: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur système");
         }
@@ -115,7 +123,7 @@ public class ElecteurController {
     @Operation(summary = "Tableau de bord électeur",
             description = "Obtenir le tableau de bord personnalisé de l'électeur")
     public ResponseEntity<ElecteurService.TableauBordElecteurDTO> obtenirTableauBord(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(value = "Authorization", required = false) String token) {
 
         log.info("📊 Consultation tableau de bord électeur");
 
@@ -145,7 +153,7 @@ public class ElecteurController {
     @Operation(summary = "Liste des candidats",
             description = "Consulter la liste de tous les candidats avec leurs informations")
     public ResponseEntity<List<ElecteurService.CandidatAvecStatutDTO>> consulterCandidats(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(value = "Authorization", required = false) String token) {
 
         log.info("🏆 Consultation candidats par électeur");
 
@@ -174,7 +182,7 @@ public class ElecteurController {
     @Operation(summary = "Campagnes d'un candidat",
             description = "Consulter toutes les campagnes d'un candidat spécifique")
     public ResponseEntity<List<CampagneDTO>> consulterCampagnesCandidat(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable String candidatId) {
 
         log.info("📢 Consultation campagnes candidat: {}", candidatId);
@@ -206,7 +214,7 @@ public class ElecteurController {
     @Operation(summary = "Résultats partiels",
             description = "Consulter les résultats partiels du vote")
     public ResponseEntity<ElecteurService.ResultatsPartielsDTO> consulterResultats(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(value = "Authorization", required = false) String token) {
 
         log.info("📊 Consultation résultats par électeur");
 
@@ -236,7 +244,7 @@ public class ElecteurController {
     @Operation(summary = "Historique activité",
             description = "Obtenir l'historique d'activité de l'électeur")
     public ResponseEntity<HistoriqueElecteurDTO> obtenirHistorique(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(value = "Authorization", required = false) String token) {
 
         log.info("📜 Consultation historique électeur");
 
@@ -273,7 +281,7 @@ public class ElecteurController {
     @Operation(summary = "Mes notifications",
             description = "Obtenir les notifications de l'électeur")
     public ResponseEntity<List<NotificationDTO>> obtenirNotifications(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(value = "Authorization", required = false) String token) {
 
         log.info("📧 Consultation notifications électeur");
 
