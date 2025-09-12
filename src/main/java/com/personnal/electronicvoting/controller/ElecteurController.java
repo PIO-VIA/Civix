@@ -85,22 +85,11 @@ public class ElecteurController {
         log.info("🔑 Changement mot de passe électeur");
 
         try {
-            if (token == null || token.trim().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Token d'autorisation requis");
-            }
-            
-            // Nettoyer le token
-            String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            var electeur = verifierEtObtenirElecteur(token);
 
-            // Utiliser directement AuthService
-            var authResponse = authService.changerMotDePasseElecteur(
-                    cleanToken,
-                    request.getAncienMotDePasse(),
-                    request.getNouveauMotDePasse()
-            );
+            electeurService.changerMotDePasse(electeur.getExternalIdElecteur(), request);
 
-            log.info("✅ Mot de passe changé avec succès pour électeur: {}", authResponse.getUserId());
+            log.info("✅ Mot de passe changé avec succès pour électeur: {}", electeur.getExternalIdElecteur());
 
             return ResponseEntity.ok("Mot de passe changé avec succès");
 
