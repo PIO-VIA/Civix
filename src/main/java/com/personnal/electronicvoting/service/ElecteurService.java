@@ -89,7 +89,6 @@ public class ElecteurService {
 
             // Changer le mot de passe
             electeur.setMotDePasse(passwordEncoder.encode(request.getNouveauMotDePasse()));
-            electeurRepository.save(electeur);
 
             log.info("Mot de passe changé avec succès pour électeur: {}", electeurId);
 
