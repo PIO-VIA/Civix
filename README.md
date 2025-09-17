@@ -1,365 +1,252 @@
-# Plateforme de Vote Électronique
+# Electronic Voting Platform
 
-## Description
+[![Java Version](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/PIO-VIA/Civix)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Système de vote électronique sécurisé développé avec Spring Boot, offrant une solution complète pour organiser des élections en ligne. La plateforme garantit la transparence, la sécurité et l'intégrité du processus électoral tout en maintenant une interface utilisateur intuitive.
+A secure electronic voting system developed with Spring Boot, providing a comprehensive solution for organizing online elections. The platform ensures the transparency, security, and integrity of the electoral process while maintaining an intuitive user interface.
 
-## Caractéristiques Principales
+## ✨ Features
 
-- **Vote sécurisé** : Un vote unique par électeur avec vérifications multiples
-- **Interface multi-rôles** : Portails distincts pour électeurs, administrateurs et consultation publique
-- **Résultats temps réel** : Suivi en direct des résultats avec statistiques détaillées
-- **Gestion des campagnes** : Système complet de gestion des candidats et leurs campagnes
-- **Rapports avancés** : Génération de rapports détaillés avec export CSV
-- **Monitoring système** : Surveillance complète de la plateforme
-- **Documentation API** : Interface Swagger complète
+- **Secure Voting**: Unique vote per voter with multiple verifications.
+- **Multi-Role Interface**: Separate portals for voters, administrators, and public viewing.
+- **Real-Time Results**: Live tracking of results with detailed statistics.
+- **Campaign Management**: Complete system for managing candidates and their campaigns.
+- **Advanced Reporting**: Generation of detailed reports with CSV export.
+- **System Monitoring**: Comprehensive platform monitoring.
+- **API Documentation**: Full interactive documentation with Swagger UI.
 
-## Architecture Technique
+## 🛠️ Tech Stack
 
-### Stack Technologique
+- **Backend**: Spring Boot 3.5.3, Spring Security, Spring Data JPA
+- **Database**: PostgreSQL 15+
+- **Security**: JWT Authentication, Password hashing with BCrypt
+- **API Documentation**: SpringDoc OpenAPI 3 (Swagger UI)
+- **Validation**: Jakarta Validation
+- **Object Mapping**: MapStruct
+- **Email Service**: Spring Mail
+- **Build Tool**: Maven
 
-- **Backend** : Spring Boot 3.5.3
-- **Base de données** : PostgreSQL 15+
-- **Sécurité** : Spring Security avec BCrypt
-- **Documentation** : SpringDoc OpenAPI 3 (Swagger)
-- **Validation** : Jakarta Validation
-- **Mapping** : MapStruct
-- **Email** : Spring Mail
-- **Build** : Maven
+## 🏛️ Architecture
 
-### Architecture Applicative
+The application follows a classic layered architecture pattern, promoting separation of concerns and maintainability.
 
-```
-├── Controllers     # Couche présentation (REST API)
-├── Services        # Logique métier
-├── Repositories    # Accès aux données (JPA)
-├── Models          # Entités JPA
-├── DTOs            # Objets de transfert
-├── Mappers         # Conversion entités/DTOs
-├── Configuration   # Configuration Spring
-└── Utils           # Utilitaires
-```
-
-## Installation et Configuration
-
-### Prérequis
-
-- Java 21+
-- PostgreSQL 15+
-- Maven 3.8+
-- Compte email SMTP (Gmail recommandé)
-
-### Configuration de la Base de Données
-
-1. Créer une base de données PostgreSQL :
-```sql
-CREATE DATABASE vote;
+```mermaid
+graph TD
+    A[Client] --> B{REST API Controller};
+    B --> C[Service Layer];
+    C --> D[Repository Layer];
+    D --> E[Database];
+    C --> F[Email Service];
+    subgraph Security
+        G[Spring Security]
+    end
+    A -- Authenticates via --> G;
+    B -- Is Secured by --> G;
 ```
 
-2. Configurer `application.properties` :
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/vote
-spring.datasource.username=votre_utilisateur
-spring.datasource.password=votre_mot_de_passe
+### Database Schema
+
+The core of the platform revolves around a few key entities that manage the voting process.
+
+```mermaid
+erDiagram
+    ADMINISTRATEUR {
+        Long id PK
+        String username
+        String email
+        String password
+    }
+
+    ELECTEUR {
+        Long id PK
+        String name
+        String email
+        String password
+        boolean hasVoted
+    }
+
+    CAMPAGNE {
+        Long id PK
+        String name
+        String description
+        date startDate
+        date endDate
+    }
+
+    ELECTION {
+        Long id PK
+        String name
+        String description
+        date startDate
+        date endDate
+        Long campagneId FK
+    }
+
+    CANDIDAT {
+        Long id PK
+        String name
+        String photoUrl
+        String description
+        Long electionId FK
+    }
+
+    VOTE {
+        Long id PK
+        timestamp voteDate
+        Long electeurId FK
+        Long candidatId FK
+        Long electionId FK
+    }
+
+    CAMPAGNE ||--o{ ELECTION : "has"
+    ELECTION ||--o{ CANDIDAT : "features"
+    ELECTION ||--o{ VOTE : "records"
+    ELECTEUR ||--o{ VOTE : "casts"
+    CANDIDAT ||--o{ VOTE : "receives"
 ```
 
-### Configuration Email
+## 🚀 Getting Started
 
-Configurer les paramètres SMTP dans `application.properties` :
-```properties
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.username=votre-email@gmail.com
-spring.mail.password=votre-mot-de-passe-app
-```
+### Prerequisites
 
-Note : Pour Gmail, utiliser un mot de passe d'application généré dans les paramètres de sécurité.
+- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+- [Maven 3.8+](https://maven.apache.org/download.cgi)
+- [PostgreSQL 15+](https://www.postgresql.org/download/)
+- [Docker](https://www.docker.com/products/docker-desktop/) (Optional, for containerized setup)
 
-### Démarrage
+### 1. Clone the Repository
 
-1. Cloner le repository :
 ```bash
 git clone https://github.com/PIO-VIA/Civix.git
 cd electronicvoting
 ```
 
-2. Installer les dépendances :
+### 2. Configure Environment
+
+The application uses an `application.properties` file for configuration. For sensitive data, it's recommended to use environment variables.
+
+Create a `.env` file in the root directory by copying the example:
 ```bash
-./mvnw clean install
+cp env.example .env
 ```
 
-3. Lancer l'application :
-```bash
-./mvnw spring-boot:run
+Now, edit the `.env` file with your specific configuration:
+
+```dotenv
+# Database Configuration
+DB_URL=jdbc:postgresql://localhost:5432/votes
+DB_USERNAME=your_db_user
+DB_PASSWORD=your_db_password
+
+# Email Configuration (use an app password for Gmail)
+EMAIL_USERNAME=your-email@gmail.com
+EMAIL_PASSWORD=your-gmail-app-password
+
+# JWT Secret Key
+JWT_SECRET=a-strong-and-long-secret-key-for-jwt-token-generation
 ```
 
-4. Accéder à l'application :
-- Application : http://localhost:8080
-- Documentation API : http://localhost:8080/swagger-ui.html
+### 3. Run with Maven
 
-## Initialisation
+1.  **Install Dependencies:**
+    ```bash
+    ./mvnw clean install
+    ```
 
-### Création du Premier Administrateur
+2.  **Run the Application:**
+    ```bash
+    ./mvnw spring-boot:run
+    ```
 
-Avant d'utiliser la plateforme, créer le premier administrateur :
+The application will be available at `http://localhost:8080`.
 
-```bash
+### 4. Run with Docker Compose
+
+This is the recommended way to run the application and its database without installing Java or PostgreSQL on your machine.
+
+1.  **Ensure your `.env` file is configured correctly.** The `docker-compose.yml` file uses it.
+2.  **Build and Start the Services:**
+    ```bash
+    docker-compose up --build
+    ```
+
+The application will be available at `http://localhost:8080`.
+
+## 📦 API Usage
+
+### API Documentation
+
+The API is fully documented using Swagger UI. Once the application is running, you can access the interactive documentation at:
+
+**[http://localhost:8080/docs](http://localhost:8080/docs)**
+
+### Initial Setup: Create the First Admin
+
+Before using the platform, you must create the first administrator account.
+
+```http
 POST /api/setup/first-admin
 Content-Type: application/json
 
 {
   "username": "admin",
   "email": "admin@example.com",
-  "motDePasse": "Admin123!",
+  "motDePasse": "AStrongPassword123!",
   "empreinteDigitale": null
 }
 ```
 
-## Guide d'Utilisation
+### Authentication
 
-### Pour les Administrateurs
+The API uses JWT Bearer tokens for authentication. First, log in using an admin or voter account to receive a token.
 
-1. **Connexion** : `POST /api/auth/admin/login`
-2. **Gestion électeurs** : Création via `POST /api/admin/electeurs`
-3. **Gestion candidats** : CRUD via `/api/admin/candidats`
-4. **Gestion campagnes** : CRUD via `/api/admin/campagnes`
-5. **Tableau de bord** : `GET /api/admin/dashboard`
-6. **Rapports** : `/api/reports/*`
+-   `POST /api/auth/admin/login`
+-   `POST /api/auth/electeur/login`
 
-### Pour les Électeurs
+Include the token in the `Authorization` header for all subsequent requests to protected endpoints.
 
-1. **Réception identifiants** : Par email après création par admin
-2. **Connexion** : `POST /api/auth/electeur/login`
-3. **Consultation candidats** : `GET /api/electeur/candidats`
-4. **Vote** : `POST /api/votes/effectuer`
-5. **Résultats** : `GET /api/electeur/resultats`
+```
+Authorization: Bearer <your_jwt_token>
+```
 
-### Consultation Publique
+## 🧪 Running Tests
 
-- **Accueil** : `GET /api/public/accueil`
-- **Candidats** : `GET /api/public/candidats`
-- **Campagnes** : `GET /api/public/campagnes`
-- **Résultats temps réel** : `GET /api/public/resultats-temps-reel`
-
-## Documentation API
-
-### Endpoints Principaux
-
-#### Authentification
-- `POST /api/auth/electeur/login` - Connexion électeur
-- `POST /api/auth/admin/login` - Connexion administrateur
-- `POST /api/auth/electeur/change-password` - Changement mot de passe
-
-#### Vote
-- `POST /api/votes/effectuer` - Effectuer un vote
-- `GET /api/votes/statut` - Vérifier statut de vote
-- `GET /api/votes/resultats` - Consulter résultats
-- `GET /api/votes/statistiques` - Statistiques de vote
-
-#### Administration
-- `POST /api/admin/electeurs` - Créer électeur
-- `POST /api/admin/candidats` - Créer candidat
-- `POST /api/admin/campagnes` - Créer campagne
-- `GET /api/admin/dashboard` - Tableau de bord
-
-#### Public
-- `GET /api/public/accueil` - Page d'accueil
-- `GET /api/public/candidats` - Liste candidats
-- `GET /api/public/campagnes` - Liste campagnes
-
-### Authentification
-
-L'API utilise des tokens Bearer pour l'authentification :
+To run the suite of unit and integration tests, use the following Maven command:
 
 ```bash
-Authorization: Bearer <token>
+./mvnw test
 ```
 
-Durée de vie des tokens : 24 heures
+## ☁️ Deployment
 
-## Sécurité
+The project is configured for deployment using Docker. You can build a Docker image and push it to a container registry.
 
-### Mesures de Sécurité Implémentées
+1.  **Build the JAR file:**
+    ```bash
+    ./mvnw clean package -DskipTests
+    ```
 
-- **Hachage des mots de passe** : BCrypt avec facteur 15
-- **Validation des entrées** : Jakarta Validation
-- **Prévention double vote** : Vérifications multiples
-- **Tokens sécurisés** : Génération avec UUID + timestamp
-- **CORS configuré** : Protection contre les attaques cross-origin
-- **Validation email** : Format et unicité
+2.  **Build the Docker image:**
+    ```bash
+    docker build -t your-docker-repo/electronic-voting .
+    ```
 
-### Processus de Vote Sécurisé
+The `Dockerfile` and `.dockerignore` files are already configured. The project also includes a `.elasticbeanstalk` configuration, suggesting it's ready for deployment on AWS Elastic Beanstalk.
 
-1. Vérification identité électeur
-2. Contrôle unicité du vote
-3. Validation candidat existant
-4. Enregistrement transactionnel
-5. Mise à jour statut électeur
-6. Logs d'audit
+## 🤝 Contributing
 
-## Structure du Projet
+Contributions are welcome! Please follow these steps:
 
-```
-src/
-├── main/
-│   ├── java/com/personnal/electronicvoting/
-│   │   ├── config/          # Configuration Spring
-│   │   ├── controller/      # Contrôleurs REST
-│   │   ├── dto/            # Data Transfer Objects
-│   │   ├── exception/      # Gestion des erreurs
-│   │   ├── mapper/         # MapStruct mappers
-│   │   ├── model/          # Entités JPA
-│   │   ├── repository/     # Repositories JPA
-│   │   ├── service/        # Services métier
-│   │   └── util/           # Classes utilitaires
-│   └── resources/
-│       └── application.properties
-└── test/
-    └── java/               # Tests unitaires
-```
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/your-feature-name`).
+3.  Make your changes and commit them (`git commit -m 'Add some feature'`).
+4.  Push to the branch (`git push origin feature/your-feature-name`).
+5.  Open a Pull Request.
 
-### Modèle de Données
+Please adhere to the existing code style and ensure all tests pass.
 
-#### Entités Principales
+## 📜 License
 
-- **Electeur** : Utilisateurs autorisés à voter
-- **Candidat** : Candidats à l'élection
-- **Vote** : Enregistrement des votes
-- **Campagne** : Campagnes électorales
-- **Administrateur** : Administrateurs système
-
-#### Relations
-
-- Un électeur peut avoir un vote (1:0..1)
-- Un candidat peut avoir plusieurs votes (1:N)
-- Un candidat peut avoir plusieurs campagnes (1:N)
-- Contraintes d'unicité sur votes par électeur
-
-## Monitoring et Maintenance
-
-### Health Checks
-
-- `GET /api/system/health` - État général du système
-- `GET /api/system/metrics` - Métriques détaillées
-
-### Maintenance
-
-- `POST /api/system/maintenance` - Mode maintenance
-- `POST /api/system/backup` - Sauvegarde données
-- `POST /api/system/cleanup` - Nettoyage système
-
-### Logs
-
-L'application génère des logs détaillés pour :
-- Connexions utilisateurs
-- Opérations de vote
-- Erreurs système
-- Actions administratives
-
-## Rapports
-
-### Types de Rapports
-
-- **Résultats complets** : Résultats détaillés avec analyses
-- **Participation** : Analyse de la participation électorale
-- **Candidats** : Performance des candidats
-- **Campagnes** : Efficacité des campagnes
-- **Exécutif** : Rapport consolidé pour direction
-
-### Formats d'Export
-
-- JSON (API)
-- CSV (téléchargement)
-- Rapports formatés
-
-## Tests
-
-### Tests Manuels
-
-Utiliser Swagger UI pour tester les endpoints :
-http://localhost:8080/swagger-ui.html
-
-### Tests d'Intégration
-
-1. Créer administrateur
-2. Créer électeurs et candidats
-3. Effectuer votes
-4. Vérifier résultats
-5. Générer rapports
-
-## Déploiement
-
-### Variables d'Environnement
-
-```bash
-# Base de données
-DB_URL=jdbc:postgresql://host:port/database
-DB_USERNAME=username
-DB_PASSWORD=password
-
-# Email
-EMAIL_USERNAME=email@domain.com
-EMAIL_PASSWORD=app-password
-
-# Sécurité
-JWT_SECRET=your-secret-key
-```
-
-
-
-### Production
-
-Recommandations pour la production :
-- Utiliser HTTPS
-- Configurer un reverse proxy (Nginx)
-- Sauvegardes régulières de la base
-- Monitoring des performances
-- Logs centralisés
-
-## Contribution
-
-### Standards de Code
-
-- Suivre les conventions Java
-- Documenter les API avec Swagger
-- Écrire des tests unitaires
-- Logs appropriés avec SLF4J
-
-### Workflow
-
-1. Fork du repository
-2. Création branche feature
-3. Développement avec tests
-4. Pull request avec description
-
-## Résolution de Problèmes
-
-### Problèmes Courants
-
-**Erreur de connexion base de données**
-- Vérifier PostgreSQL démarré
-- Contrôler credentials dans application.properties
-
-**Emails non envoyés**
-- Vérifier configuration SMTP
-- Tester avec `/api/test/email`
-
-**Token invalide**
-- Vérifier format Bearer token
-- Contrôler expiration (24h)
-
-### Support
-
-Pour des questions techniques :
-1. Consulter la documentation Swagger
-2. Vérifier les logs applicatifs
-3. Utiliser les endpoints de health check
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
-
-## Auteurs
-
-Développé par moi dans le cadre d'un projet d'apprentissage des technologies Spring Boot et des systèmes de vote électronique sécurisés.
-
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
