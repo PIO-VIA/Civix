@@ -67,7 +67,7 @@ public class SwaggerConfig {
                                 .url("http://localhost:8080")
                                 .description(" Serveur de Développement"),
                         new Server()
-                                .url("http://13.49.148.184:8080")
+                                .url("https://civix-1-23wr.onrender.com")
                                 .description(" Serveur de Production")))
                 .addSecurityItem(new SecurityRequirement()
                         .addList("bearerAuth"))
