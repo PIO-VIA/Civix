@@ -98,7 +98,7 @@ public class EmailService {
             • Vous ne pouvez voter qu'une seule fois
             • Gardez vos identifiants confidentiels
             
-            🌐 Lien de connexion : http://localhost:8080/login
+            🌐 Lien de connexion : https://civix-five.vercel.app/login
             
             Bonne élection !
             
@@ -122,7 +122,7 @@ public class EmailService {
             • Changez ce mot de passe dès votre connexion
             • Ne partagez jamais vos identifiants
             
-            🌐 Lien de connexion : http://localhost:8080/login
+            🌐 Lien de connexion : https://civix-five.vercel.app/login
             
             ---
             L'équipe de la Plateforme de Vote
